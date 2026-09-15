@@ -1,0 +1,13 @@
+product_id,product_name,category,unit_price,unit_cost
+P001,Laptop Pro 14,Electronics,90000,65000
+P002,Laptop Air 13,Electronics,70000,50000
+P003,Smartphone X,Electronics,55000,38000
+P004,Smartphone Lite,Electronics,30000,21000
+P005,Tablet Pro,Electronics,45000,31000
+P006,Wireless Headphones,Accessories,12000,6500
+P007,Smart Watch,Accessories,18000,10500
+P008,Mechanical Keyboard,Accessories,9000,5000
+P009,Office Monitor,Office,25000,16500
+P010,Ergonomic Chair,Office,22000,14500
+P011,Desk Lamp,Office,4500,2400
+P012,USB-C Dock,Accessories,8500,4600
