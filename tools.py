@@ -21,6 +21,13 @@ def query_semantic_layer(query: SemanticQuery):
                     row for row in results
                     if row["month"] == "2026-08"
                 ]
+                
+        elif key == "month":
+            results = [
+                row for row in results
+                if row["month"] == value
+            ]
+        
 
     # Get requested metric
     output = []
