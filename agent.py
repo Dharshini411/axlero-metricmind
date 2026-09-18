@@ -1,3 +1,4 @@
+
 from parser import parse_question
 from tools import query_semantic_layer
 from reasoning import (
@@ -5,6 +6,45 @@ from reasoning import (
     get_comparison_data,
     calculate_change
 )
+
+
+def format_currency(value):
+    return f"₹{value:,.0f}"
+
+
+def generate_lookup_answer(query, data):
+    if not data:
+        return "I couldn't find any data for that question."
+
+    # Grouped result, for example: sales by region
+    if query.dimensions:
+
+        lines = []
+
+        for row in data:
+            dimension = query.dimensions[0]
+            dimension_value = row.get(dimension)
+            metric_value = row.get(query.metric)
+
+            lines.append(
+                f"{dimension_value}: {format_currency(metric_value)}"
+            )
+
+        title = f"{query.metric.title()} by {query.dimensions[0]}:"
+
+        return title + "\n" + "\n".join(lines)
+
+    # Normal single-result query
+    row = data[0]
+
+    metric_value = row.get(query.metric)
+
+    if metric_value is None:
+        return "I found the data, but I couldn't determine the value."
+
+    metric_name = query.metric.title()
+
+    return f"{metric_name} was {format_currency(metric_value)}."
 
 
 def run_agent(question: str):
@@ -15,7 +55,7 @@ def run_agent(question: str):
     # Check if this is a comparison question
     if is_comparison_question(question):
 
-        # For our current prototype
+        # Current prototype comparison
         metric = "revenue"
         state = "Maharashtra"
 
@@ -30,12 +70,19 @@ def run_agent(question: str):
             metric
         )
 
-        print("\nReasoning result:")
-        print(result)
+        answer = (
+            f"{metric.title()} in {state} increased by "
+            f"{format_currency(result['difference'])} "
+            f"from July to August, which is "
+            f"{result['percentage_change']:.1f}%."
+        )
+
+        print("\nAnswer:")
+        print(answer)
 
         return {
             "type": "comparison",
-            "result": result
+            "answer": answer
         }
 
     # Normal question
@@ -49,8 +96,16 @@ def run_agent(question: str):
     print("\nSemantic API result:")
     print(result)
 
+    answer = generate_lookup_answer(
+        query,
+        result
+    )
+
+    print("\nAnswer:")
+    print(answer)
+
     return {
         "type": "lookup",
-        "query": query,
-        "data": result
+        "answer": answer
     }
+
