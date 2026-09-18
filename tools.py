@@ -16,20 +16,60 @@ def query_semantic_layer(query: SemanticQuery):
 
         elif key == "period":
             if value == "last_month":
-                # For our mock project, last_month = August 2026
                 results = [
                     row for row in results
                     if row["month"] == "2026-08"
                 ]
-                
+
         elif key == "month":
             results = [
                 row for row in results
                 if row["month"] == value
             ]
-        
 
-    # Get requested metric
+    # Handle "by region"
+    if "region" in query.dimensions:
+
+        grouped = {}
+
+        for row in results:
+            region = row["region"]
+
+            if region not in grouped:
+                grouped[region] = 0
+
+            grouped[region] += row[query.metric]
+
+        return [
+            {
+                "region": region,
+                query.metric: value
+            }
+            for region, value in grouped.items()
+        ]
+
+    # Handle "by state"
+    if "state" in query.dimensions:
+
+        grouped = {}
+
+        for row in results:
+            state = row["state"]
+
+            if state not in grouped:
+                grouped[state] = 0
+
+            grouped[state] += row[query.metric]
+
+        return [
+            {
+                "state": state,
+                query.metric: value
+            }
+            for state, value in grouped.items()
+        ]
+
+    # Normal query
     output = []
 
     for row in results:

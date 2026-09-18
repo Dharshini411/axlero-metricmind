@@ -5,17 +5,26 @@ def parse_question(question: str) -> SemanticQuery:
 
     q = question.lower()
 
-    # Detect metric
     if "profit" in q:
         metric = "profit"
 
     elif "revenue" in q:
         metric = "revenue"
 
+    elif "sales" in q:
+        metric = "revenue"
+
     else:
         raise ValueError("I don't understand which metric you want.")
 
-    # Detect filters
+    dimensions = []
+
+    if "by region" in q or "region" in q:
+        dimensions.append("region")
+
+    if "by state" in q or "state" in q:
+        dimensions.append("state")
+
     filters = {}
 
     if "maharashtra" in q:
@@ -29,6 +38,6 @@ def parse_question(question: str) -> SemanticQuery:
 
     return SemanticQuery(
         metric=metric,
-        dimensions=[],
+        dimensions=dimensions,
         filters=filters
     )
