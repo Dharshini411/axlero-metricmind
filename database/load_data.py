@@ -1,59 +1,69 @@
 """
-MetricMind — CSV to PostgreSQL loader.
+MetricMind Project - load_data.py
+-----------------------------------
+Real team dataset (5 CSV files) ko PostgreSQL ke `raw` schema
+mein load karta hai.
 
-Automates what was previously done manually via pgAdmin's Import/Export tool:
-loads each raw CSV file into its matching table in the "raw" schema, in an
-order that respects foreign key dependencies.
+Requirements:
+    pip install pandas sqlalchemy psycopg2-binary
 
-Usage:
-    python load_data.py
-
-Requires:
-    pip install psycopg2-binary pandas
+Note: Pehle schema.sql chala ke tables bana lo (pgAdmin Query Tool se),
+      uske baad ye script data load karega.
 """
 
 import pandas as pd
 from sqlalchemy import create_engine
 
-# ---- connection settings — update these for your environment ----
+# ============================================================
+# DATABASE CONNECTION - apni details yaha daalo
+# ============================================================
 DB_USER = "postgres"
-DB_PASSWORD = "your_password"
+DB_PASSWORD = "Verm@45."   # apna pgAdmin password daalo
 DB_HOST = "localhost"
 DB_PORT = "5432"
 DB_NAME = "metricmind"
 
-# Order matters: independent tables first, then tables that reference them.
-LOAD_ORDER = [
-    ("customers", "../data/raw/customers_raw.csv"),
-    ("products", "../data/raw/products_raw.csv"),
-    ("date_dimension", "../data/raw/date_dimension_raw.csv"),
-    ("orders", "../data/raw/orders_raw.csv"),
-    ("costs", "../data/raw/costs_raw.csv"),
-]
+engine = create_engine(
+    f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+)
+
+# ============================================================
+# CSV FILES KA PATH (apne system ke hisaab se folder path adjust karo)
+# ============================================================
+DATA_FOLDER = "data/raw"  # jaha aapki 5 CSV files rakhi hain
+
+files_to_tables = {
+    "customers_raw.csv": "customers",
+    "products_raw.csv": "products",
+    "date_dimension_raw.csv": "date_dimension",
+    "orders_raw.csv": "orders",
+    "costs_raw.csv": "costs",
+}
 
 
-def get_engine():
-    url = f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
-    return create_engine(url)
+def load_csv_to_table(csv_filename, table_name):
+    """Ek CSV file ko raw schema ke table mein load karta hai."""
+    filepath = f"{DATA_FOLDER}/{csv_filename}"
+    print(f"Loading {filepath} -> raw.{table_name} ...")
+
+    df = pd.read_csv(filepath)
+
+    df.to_sql(
+        table_name,
+        engine,
+        schema="raw",
+        if_exists="append",   # table already schema.sql se bana hua hai
+        index=False,
+    )
+    print(f"  -> {len(df)} rows loaded into raw.{table_name}")
 
 
-def load_all():
-    engine = get_engine()
+def main():
+    for csv_file, table in files_to_tables.items():
+        load_csv_to_table(csv_file, table)
 
-    for table_name, csv_path in LOAD_ORDER:
-        print(f"Loading {csv_path} -> raw.{table_name} ...")
-        df = pd.read_csv(csv_path)
-        df.to_sql(
-            table_name,
-            engine,
-            schema="raw",
-            if_exists="append",
-            index=False,
-        )
-        print(f"  -> {len(df)} rows loaded into raw.{table_name}")
-
-    print("\nAll tables loaded successfully.")
+    print("\nSab CSV files successfully load ho gayi hain!")
 
 
 if __name__ == "__main__":
-    load_all()
+    main()
