@@ -1,43 +1,83 @@
+
 from schemas import SemanticQuery
 
 
-def parse_question(question: str) -> SemanticQuery:
+MEASURES = {
+    "revenue": "Sales.revenue",
+    "cost": "Sales.cost",
+    "profit": "Sales.profit",
+    "margin percent": "Sales.marginPercent",
+    "margin": "Sales.marginPercent",
+}
 
+
+DIMENSIONS = {
+    "sales channel": "Sales.salesChannel",
+    "country": "Sales.country",
+    "region": "Sales.region",
+    "product name": "Sales.productName",
+    "product": "Sales.productName",
+    "category": "Sales.category",
+    "customer name": "Sales.customerName",
+    "customer": "Sales.customerName",
+    "segment": "Sales.segment",
+    "channel": "Sales.salesChannel",
+    "month": "Sales.orderDate",
+    "date": "Sales.orderDate",
+}
+
+
+COUNTRIES = [
+    "India",
+    "USA",
+    "UK",
+    "France",
+    "Germany",
+    "Japan",
+    "Canada",
+    "Australia",
+]
+
+
+def parse_question(question: str) -> SemanticQuery:
     q = question.lower()
 
-    if "profit" in q:
-        metric = "profit"
-
-    elif "revenue" in q:
-        metric = "revenue"
-
-    elif "sales" in q:
-        metric = "revenue"
-
-    else:
-        raise ValueError("I don't understand which metric you want.")
-
+    measures = []
     dimensions = []
-
-    if "by region" in q or "region" in q:
-        dimensions.append("region")
-
-    if "by state" in q or "state" in q:
-        dimensions.append("state")
-
     filters = {}
 
-    if "maharashtra" in q:
-        filters["state"] = "Maharashtra"
+    # Detect measures
+    for keyword in sorted(MEASURES, key=len, reverse=True):
+        if keyword in q:
+            cube_measure = MEASURES[keyword]
 
-    elif "karnataka" in q:
-        filters["state"] = "Karnataka"
+            if cube_measure not in measures:
+                measures.append(cube_measure)
 
-    if "last month" in q:
-        filters["period"] = "last_month"
+    # Detect dimensions
+    for keyword in sorted(DIMENSIONS, key=len, reverse=True):
+        if keyword in q:
+            cube_dimension = DIMENSIONS[keyword]
+
+            if cube_dimension not in dimensions:
+                dimensions.append(cube_dimension)
+
+    # Detect country filters
+    for country in COUNTRIES:
+        if country.lower() in q:
+            filters["Sales.country"] = country
+            break
+
+    # Require at least one measure
+    if not measures:
+        raise ValueError(
+            "I couldn't identify a metric. "
+            "Try revenue, cost, profit, or margin."
+        )
 
     return SemanticQuery(
-        metric=metric,
+        measures=measures,
         dimensions=dimensions,
-        filters=filters
+        filters=filters,
     )
+

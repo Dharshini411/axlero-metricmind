@@ -1,50 +1,64 @@
 
 from parser import parse_question
 from tools import query_semantic_layer
-from reasoning import (
-    is_comparison_question,
-    get_comparison_data,
-    calculate_change
-)
 
 
-def format_currency(value):
-    return f"₹{value:,.0f}"
+def format_value(value):
+    if isinstance(value, (int, float)):
+        return f"{value:,.2f}"
+
+    return str(value)
 
 
 def generate_lookup_answer(query, data):
     if not data:
         return "I couldn't find any data for that question."
 
-    # Grouped result, for example: sales by region
     if query.dimensions:
+        dimension = query.dimensions[0]
 
         lines = []
 
         for row in data:
-            dimension = query.dimensions[0]
-            dimension_value = row.get(dimension)
-            metric_value = row.get(query.metric)
+            dimension_value = row.get(dimension, "Unknown")
+
+            metric_values = []
+
+            for measure in query.measures:
+                value = row.get(measure)
+
+                if value is not None:
+                    metric_name = measure.split(".")[-1]
+
+                    metric_values.append(
+                        f"{metric_name}: {format_value(value)}"
+                    )
 
             lines.append(
-                f"{dimension_value}: {format_currency(metric_value)}"
+                f"{dimension_value} → "
+                + ", ".join(metric_values)
             )
 
-        title = f"{query.metric.title()} by {query.dimensions[0]}:"
+        return "\n".join(lines)
 
-        return title + "\n" + "\n".join(lines)
-
-    # Normal single-result query
     row = data[0]
 
-    metric_value = row.get(query.metric)
+    results = []
 
-    if metric_value is None:
-        return "I found the data, but I couldn't determine the value."
+    for measure in query.measures:
+        value = row.get(measure)
 
-    metric_name = query.metric.title()
+        if value is not None:
+            metric_name = measure.split(".")[-1]
 
-    return f"{metric_name} was {format_currency(metric_value)}."
+            results.append(
+                f"{metric_name}: {format_value(value)}"
+            )
+
+    if not results:
+        return "I found the data, but couldn't determine the values."
+
+    return "\n".join(results)
 
 
 def run_agent(question: str):
@@ -52,40 +66,6 @@ def run_agent(question: str):
     print("User question:")
     print(question)
 
-    # Check if this is a comparison question
-    if is_comparison_question(question):
-
-        # Current prototype comparison
-        metric = "revenue"
-        state = "Maharashtra"
-
-        data = get_comparison_data(
-            metric=metric,
-            state=state
-        )
-
-        result = calculate_change(
-            data["july"],
-            data["august"],
-            metric
-        )
-
-        answer = (
-            f"{metric.title()} in {state} increased by "
-            f"{format_currency(result['difference'])} "
-            f"from July to August, which is "
-            f"{result['percentage_change']:.1f}%."
-        )
-
-        print("\nAnswer:")
-        print(answer)
-
-        return {
-            "type": "comparison",
-            "answer": answer
-        }
-
-    # Normal question
     query = parse_question(question)
 
     print("\nStructured query:")
@@ -108,4 +88,65 @@ def run_agent(question: str):
         "type": "lookup",
         "answer": answer
     }
+
+
+def highest_revenue_country():
+
+    print("Step 1: Query revenue by country")
+
+    revenue_query = parse_question(
+        "Show revenue by country"
+    )
+
+    revenue_data = query_semantic_layer(
+        revenue_query
+    )
+
+    if not revenue_data:
+        return "I couldn't find country revenue data."
+
+    highest_country = max(
+        revenue_data,
+        key=lambda row: float(
+            row["Sales.revenue"]
+        )
+    )
+
+    country = highest_country["Sales.country"]
+    revenue = highest_country["Sales.revenue"]
+
+    print("\nStep 1 result:")
+    print(highest_country)
+
+    print("\nStep 2: Query profit for", country)
+
+    profit_query = parse_question(
+        f"Show profit for {country}"
+    )
+
+    profit_data = query_semantic_layer(
+        profit_query
+    )
+
+    if not profit_data:
+        return f"I found {country}'s revenue but couldn't find its profit."
+
+    profit = profit_data[0].get(
+        "Sales.profit"
+    )
+
+    print("\nStep 2 result:")
+    print(profit_data)
+
+    answer = (
+        f"{country} has the highest revenue at "
+        f"{format_value(float(revenue))}. "
+        f"Its profit is "
+        f"{format_value(float(profit))}."
+    )
+
+    print("\nFinal answer:")
+    print(answer)
+
+    return answer
 
