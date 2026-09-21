@@ -1,0 +1,14 @@
+## 6. Request JSON Example
+
+Example request to retrieve Revenue and Cost by Country:
+
+```json
+{
+  "measures": [
+    "Sales.revenue",
+    "Sales.cost"
+  ],
+  "dimensions": [
+    "Sales.country"
+  ]
+}
