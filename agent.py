@@ -66,6 +66,23 @@ def run_agent(question: str):
     print("User question:")
     print(question)
 
+    q = question.lower()
+
+    # Detect analytical question:
+    # "Which country has the highest revenue and what is its profit?"
+    if (
+        "highest revenue" in q
+        and "profit" in q
+        and "country" in q
+    ):
+        answer = highest_revenue_country()
+
+        return {
+            "type": "reasoning",
+            "answer": answer
+        }
+
+    # Normal lookup flow
     query = parse_question(question)
 
     print("\nStructured query:")
