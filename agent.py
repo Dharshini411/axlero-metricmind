@@ -1,4 +1,3 @@
-
 from parser import parse_question
 from tools import query_semantic_layer
 
@@ -66,45 +65,111 @@ def run_agent(question: str):
     print("User question:")
     print(question)
 
-    q = question.lower()
+    try:
 
-    # Detect analytical question:
-    # "Which country has the highest revenue and what is its profit?"
-    if (
-        "highest revenue" in q
+        q = question.lower()
+
+        # Pattern 1:
+        # Which country has the highest revenue and what is its profit?
+        if (
+            "highest revenue" in q
+            and "profit" in q
+            and "country" in q
+        ):
+            answer = highest_revenue_country()
+
+            return {
+                "type": "reasoning",
+                "answer": answer
+            }
+
+        # Pattern 2:
+        # Which country has the highest profit?
+        if (
+            "highest profit" in q
+            and "country" in q
+        ):
+            answer = highest_profit_country()
+
+            return {
+                "type": "reasoning",
+                "answer": answer
+            }
+
+        # Pattern 3:
+        # Which country has the highest revenue and what is its margin?
+        if (
+            "highest revenue" in q
+            and "margin" in q
+            and "country" in q
+        ):
+            answer = highest_revenue_country_margin()
+
+            return {
+                "type": "reasoning",
+                "answer": answer
+            }
+            
+        # Pattern 4:
+    # Which country has the lowest revenue and what is its profit?
+        if (
+        "lowest revenue" in q
         and "profit" in q
         and "country" in q
-    ):
-        answer = highest_revenue_country()
+        ):
+            answer = lowest_revenue_country()
 
         return {
             "type": "reasoning",
             "answer": answer
         }
 
-    # Normal lookup flow
-    query = parse_question(question)
+        # Normal lookup flow
+        query = parse_question(question)
 
-    print("\nStructured query:")
-    print(query)
+        print("\nStructured query:")
+        print(query)
 
-    result = query_semantic_layer(query)
+        result = query_semantic_layer(query)
 
-    print("\nSemantic API result:")
-    print(result)
+        print("\nSemantic API result:")
+        print(result)
 
-    answer = generate_lookup_answer(
-        query,
-        result
-    )
+        answer = generate_lookup_answer(
+            query,
+            result
+        )
 
-    print("\nAnswer:")
-    print(answer)
+        print("\nAnswer:")
+        print(answer)
 
-    return {
-        "type": "lookup",
-        "answer": answer
-    }
+        return {
+            "type": "lookup",
+            "answer": answer
+        }
+
+    except ValueError as e:
+
+        print("\nParser error:")
+        print(e)
+
+        return {
+            "type": "error",
+            "answer": str(e)
+        }
+
+    except Exception as e:
+
+        print("\nAgent/Semantic API error:")
+        print(e)
+
+        return {
+            "type": "error",
+            "answer": (
+                "The Semantic Layer is currently unavailable. "
+                "Please try again later."
+            )
+        }
 
 
 def highest_revenue_country():
@@ -146,7 +211,10 @@ def highest_revenue_country():
     )
 
     if not profit_data:
-        return f"I found {country}'s revenue but couldn't find its profit."
+        return (
+            f"I found {country}'s revenue "
+            "but couldn't find its profit."
+        )
 
     profit = profit_data[0].get(
         "Sales.profit"
@@ -167,3 +235,170 @@ def highest_revenue_country():
 
     return answer
 
+
+def highest_profit_country():
+
+    print("Step 1: Query profit by country")
+
+    profit_query = parse_question(
+        "Show profit by country"
+    )
+
+    profit_data = query_semantic_layer(
+        profit_query
+    )
+
+    if not profit_data:
+        return "I couldn't find country profit data."
+
+    highest_country = max(
+        profit_data,
+        key=lambda row: float(
+            row["Sales.profit"]
+        )
+    )
+
+    country = highest_country["Sales.country"]
+    profit = highest_country["Sales.profit"]
+
+    print("\nStep 1 result:")
+    print(highest_country)
+
+    answer = (
+        f"{country} has the highest profit at "
+        f"{format_value(float(profit))}."
+    )
+
+    print("\nFinal answer:")
+    print(answer)
+
+    return answer
+
+
+def highest_revenue_country_margin():
+
+    print("Step 1: Query revenue by country")
+
+    revenue_query = parse_question(
+        "Show revenue by country"
+    )
+
+    revenue_data = query_semantic_layer(
+        revenue_query
+    )
+
+    if not revenue_data:
+        return "I couldn't find country revenue data."
+
+    highest_country = max(
+        revenue_data,
+        key=lambda row: float(
+            row["Sales.revenue"]
+        )
+    )
+
+    country = highest_country["Sales.country"]
+    revenue = highest_country["Sales.revenue"]
+
+    print("\nStep 1 result:")
+    print(highest_country)
+
+    print("\nStep 2: Query margin for", country)
+
+    margin_query = parse_question(
+        "Show margin"
+    )
+
+    margin_query.filters["Sales.country"] = country
+
+    margin_data = query_semantic_layer(
+        margin_query
+    )
+
+    if not margin_data:
+        return (
+            f"I found {country}'s revenue "
+            "but couldn't find its margin."
+        )
+
+    margin = margin_data[0].get(
+        "Sales.marginPercent"
+    )
+
+    print("\nStep 2 result:")
+    print(margin_data)
+
+    answer = (
+        f"{country} has the highest revenue at "
+        f"{format_value(float(revenue))}. "
+        f"Its margin is "
+        f"{format_value(float(margin) * 100)}%."
+    )
+
+    print("\nFinal answer:")
+    print(answer)
+
+    return answer
+
+def lowest_revenue_country():
+
+    print("Step 1: Query revenue by country")
+
+    revenue_query = parse_question(
+        "Show revenue by country"
+    )
+
+    revenue_data = query_semantic_layer(
+        revenue_query
+    )
+
+    if not revenue_data:
+        return "I couldn't find country revenue data."
+
+    lowest_country = min(
+        revenue_data,
+        key=lambda row: float(
+            row["Sales.revenue"]
+        )
+    )
+
+    country = lowest_country["Sales.country"]
+    revenue = lowest_country["Sales.revenue"]
+
+    print("\nStep 1 result:")
+    print(lowest_country)
+
+    print("\nStep 2: Query profit for", country)
+
+    profit_query = parse_question(
+        f"Show profit for {country}"
+    )
+
+    profit_data = query_semantic_layer(
+        profit_query
+    )
+
+    if not profit_data:
+        return (
+            f"I found {country}'s revenue "
+            "but couldn't find its profit."
+        )
+
+    profit = profit_data[0].get(
+        "Sales.profit"
+    )
+
+    print("\nStep 2 result:")
+    print(profit_data)
+
+    answer = (
+        f"{country} has the lowest revenue at "
+        f"{format_value(float(revenue))}. "
+        f"Its profit is "
+        f"{format_value(float(profit))}."
+    )
+
+    print("\nFinal answer:")
+    print(answer)
+
+    return answer

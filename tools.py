@@ -3,7 +3,7 @@ import requests
 from schemas import SemanticQuery
 
 
-CUBE_API_URL = "https://dosage-colours-fantastic-steps.trycloudflare.com/cubejs-api/v1/load"
+CUBE_API_URL = "https://lab-cope-cope-cloudy.trycloudflare.com/cubejs-api/v1/load"
 
 
 def query_semantic_layer(query: SemanticQuery):
