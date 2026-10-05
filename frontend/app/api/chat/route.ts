@@ -1,8 +1,5 @@
 import { NextResponse } from "next/server";
-
-const API_URL =
-  "https://speeches-municipal-elsewhere-wax.trycloudflare.com/api/chat";
-
+import { API_URL } from "@/mock/api";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
