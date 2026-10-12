@@ -13,18 +13,42 @@ METRICS = {
 }
 
 
+
+import re
+
+
 def is_comparison_question(question: str) -> bool:
     q = question.lower()
-    comparison_words = [
+
+    comparison_phrases = [
         "increase",
+        "increased",
         "decrease",
+        "decreased",
         "compare",
+        "comparison",
         "higher",
         "lower",
+        "difference",
+        "versus",
+        "vs",
+        "grew",
+        "growth",
+        "declined",
+        "change",
+        "changed",
         "from",
         "to",
     ]
-    return any(word in q for word in comparison_words)
+
+    return any(
+        re.search(
+            r"\b" + re.escape(phrase) + r"\b",
+            q,
+        )
+        for phrase in comparison_phrases
+    )
+
 
 
 def get_comparison_data(metric: str, country: str | None = None):
