@@ -1,9 +1,17 @@
 
+import os
 import re
 
 from parser import parse_question
 from tools import query_semantic_layer
 from local_agent import run_local_agent
+
+
+# Set METRICMIND_LOCAL_MODE=true to use fictional sample data.
+# Default: live data mode.
+USE_LOCAL_SAMPLE_DATA = (
+    os.getenv("METRICMIND_LOCAL_MODE", "false").lower() == "true"
+)
 
 
 METRIC_NAMES = {
@@ -150,19 +158,26 @@ def format_lookup_rows(query, data):
 
 
 def generate_lookup_answer(query, data):
-    """Backward-compatible helper used by older code."""
+    """Backward-compatible helper for older code."""
     return format_lookup_rows(query, data)
 
 
 def run_agent(question: str):
-    """Try the live API first, then fall back to local sample data."""
+    """Query live data and report service failures clearly."""
     try:
         query = parse_question(question)
+
+        # Explicit demo mode: do not call the live API.
+        if USE_LOCAL_SAMPLE_DATA:
+            return run_local_agent(question)
+
         data = query_semantic_layer(query)
 
-        # Use local data if the API returns no records.
         if not data:
-            return run_local_agent(question)
+            return {
+                "type": "lookup",
+                "answer": "I couldn't find any data for that question.",
+            }
 
         ranking = get_ranking(question)
 
@@ -241,37 +256,37 @@ def run_agent(question: str):
         }
 
     except ValueError as error:
-        # Preserve helpful parser and validation messages.
         return {
             "type": "error",
             "answer": str(error),
         }
 
     except Exception as error:
-        # If the live API fails, try the local CSV-based agent.
         print(f"Live API unavailable: {error}")
-        print("Trying local sample data...")
-
-        local_result = run_local_agent(question)
-
-        if local_result["type"] != "error":
-            return local_result
 
         return {
             "type": "error",
             "answer": (
-                "The live API is unavailable, and local sample data "
-                f"could not answer the question: {local_result['answer']}"
+                "The live data service is currently unavailable.\n"
+                "Please try again later."
             ),
         }
 
 
 if __name__ == "__main__":
-    print("MetricMind — LIVE API WITH LOCAL FALLBACK")
-    print("Local fallback uses fictional sample data.")
+    if USE_LOCAL_SAMPLE_DATA:
+        print("MetricMind — LOCAL SAMPLE DATA MODE")
+        print(
+            "Note: Answers use fictional sample data, "
+            "not real business data."
+        )
+    else:
+        print("MetricMind — LIVE DATA MODE")
 
     while True:
-        question = input("\nAsk a business question (or type 'exit'): ")
+        question = input(
+            "\nAsk a business question (or type 'exit'): "
+        )
 
         if question.strip().lower() in {"exit", "quit"}:
             break
