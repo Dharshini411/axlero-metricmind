@@ -1,9 +1,10 @@
 
 import os
 import re
+from datetime import datetime
 
 from parser import parse_question
-from tools import query_semantic_layer
+from tools import query_semantic_layer, query_generated_sql
 from local_agent import run_local_agent
 
 
@@ -69,6 +70,19 @@ def format_value(value):
         return str(value)
 
 
+def format_month(value):
+    """Convert a Cube.js date value to a readable month and year."""
+    if value is None:
+        return None
+
+    try:
+        date_text = str(value).replace("Z", "+00:00")
+        parsed_date = datetime.fromisoformat(date_text)
+        return parsed_date.strftime("%B %Y")
+    except (ValueError, TypeError):
+        return str(value)
+
+
 def get_ranking(question):
     """Return highest/lowest ranking intent, if present."""
     q = question.lower()
@@ -127,13 +141,27 @@ def format_lookup_rows(query, data):
     for row in data:
         dimension_values = []
 
+        # Format regular dimensions.
         for dimension in query.dimensions:
             name = dimension.split(".")[-1]
             value = row.get(dimension, "Unknown")
             dimension_values.append(f"{name}: {value}")
 
+        # Cube.js uses a generated key for time dimensions.
+        if query.granularity:
+            time_key = f"Sales.orderDate.{query.granularity}"
+            time_value = row.get(time_key)
+
+            if time_value is None:
+                time_value = row.get("Sales.orderDate")
+
+            if time_value is not None:
+                month_label = format_month(time_value)
+                dimension_values.append(f"Month: {month_label}")
+
         metric_values = []
 
+        # Format measures such as revenue, cost, and profit.
         for measure in query.measures:
             value = row.get(measure)
 
@@ -152,7 +180,11 @@ def format_lookup_rows(query, data):
             lines.append(" | ".join(parts))
 
     if not lines:
-        return "I found the data, but couldn't determine the values."
+        available_keys = ", ".join(str(key) for key in data[0].keys())
+        return (
+            "I found the data, but couldn't determine the values. "
+            f"Returned fields: {available_keys}"
+        )
 
     return "\n".join(lines)
 
@@ -163,7 +195,7 @@ def generate_lookup_answer(query, data):
 
 
 def run_agent(question: str):
-    """Query live data and report service failures clearly."""
+    """Query live data and return the answer and generated SQL."""
     try:
         query = parse_question(question)
 
@@ -172,11 +204,13 @@ def run_agent(question: str):
             return run_local_agent(question)
 
         data = query_semantic_layer(query)
+        sql = query_generated_sql(query)
 
         if not data:
             return {
                 "type": "lookup",
                 "answer": "I couldn't find any data for that question.",
+                "sql": sql,
             }
 
         ranking = get_ranking(question)
@@ -189,6 +223,7 @@ def run_agent(question: str):
                         "To rank results, specify a dimension such as "
                         "country, region, product, or customer."
                     ),
+                    "sql": sql,
                 }
 
             measure = get_ranking_measure(question, query)
@@ -197,6 +232,7 @@ def run_agent(question: str):
                 return {
                     "type": "error",
                     "answer": "Please specify a metric to rank.",
+                    "sql": sql,
                 }
 
             valid_rows = [
@@ -208,6 +244,7 @@ def run_agent(question: str):
                 return {
                     "type": "lookup",
                     "answer": "No comparable values were returned.",
+                    "sql": sql,
                 }
 
             valid_rows.sort(
@@ -217,7 +254,6 @@ def run_agent(question: str):
 
             count = get_top_count(question)
             selected_rows = valid_rows[:count]
-
             answer_lines = []
 
             for index, row in enumerate(selected_rows, start=1):
@@ -248,11 +284,13 @@ def run_agent(question: str):
             return {
                 "type": "reasoning",
                 "answer": "\n".join(answer_lines),
+                "sql": sql,
             }
 
         return {
             "type": "lookup",
             "answer": format_lookup_rows(query, data),
+            "sql": sql,
         }
 
     except ValueError as error:
@@ -275,13 +313,13 @@ def run_agent(question: str):
 
 if __name__ == "__main__":
     if USE_LOCAL_SAMPLE_DATA:
-        print("MetricMind — LOCAL SAMPLE DATA MODE")
+        print("MetricMind - LOCAL SAMPLE DATA MODE")
         print(
             "Note: Answers use fictional sample data, "
             "not real business data."
         )
     else:
-        print("MetricMind — LIVE DATA MODE")
+        print("MetricMind - LIVE DATA MODE")
 
     while True:
         question = input(
@@ -295,3 +333,7 @@ if __name__ == "__main__":
 
         print("\nAnswer:")
         print(result["answer"])
+
+        if result.get("sql"):
+            print("\nGenerated SQL:")
+            print(result["sql"])

@@ -20,7 +20,8 @@ class TestParser(unittest.TestCase):
 
     def test_revenue_by_month(self):
         query = parse_question("Show revenue by month")
-        self.assertIn("Sales.orderDate", query.dimensions)
+        self.assertEqual(query.granularity, "month")
+        self.assertNotIn("Sales.orderDate", query.dimensions)
 
     def test_unsupported_state(self):
         with self.assertRaises(ValueError):

@@ -1,3 +1,4 @@
+
 import re
 
 from schemas import SemanticQuery
@@ -37,8 +38,6 @@ DIMENSIONS = {
     "segment": "Sales.segment",
     "channels": "Sales.salesChannel",
     "channel": "Sales.salesChannel",
-    "months": "Sales.orderDate",
-    "month": "Sales.orderDate",
     "dates": "Sales.orderDate",
     "date": "Sales.orderDate",
 }
@@ -77,6 +76,7 @@ def parse_question(question: str) -> SemanticQuery:
 
     q = question.lower()
     time_range = None
+    granularity = None
 
     time_aliases = {
         "last month": ["last month", "previous month"],
@@ -89,6 +89,22 @@ def parse_question(question: str) -> SemanticQuery:
         if any(contains_phrase(q, alias) for alias in aliases):
             time_range = time_name
             break
+
+    # Recognize explicit requests to group data by calendar month.
+    month_grouping_phrases = [
+        "by month",
+        "by months",
+        "per month",
+        "monthly",
+        "each month",
+        "month over month",
+    ]
+
+    if any(
+        contains_phrase(q, phrase)
+        for phrase in month_grouping_phrases
+    ):
+        granularity = "month"
 
     for state in UNSUPPORTED_STATES:
         if contains_phrase(q, state.lower()):
@@ -114,11 +130,8 @@ def parse_question(question: str) -> SemanticQuery:
         if contains_phrase(q, keyword):
             dimension = DIMENSIONS[keyword]
 
-            # A date filter alone should not group results by date.
-            if (
-                time_range
-                and dimension == "Sales.orderDate"
-            ):
+            # A time filter alone should not group results by date.
+            if time_range and dimension == "Sales.orderDate":
                 continue
 
             if dimension not in dimensions:
@@ -141,4 +154,5 @@ def parse_question(question: str) -> SemanticQuery:
         dimensions=dimensions,
         filters=filters,
         time_range=time_range,
+        granularity=granularity,
     )
