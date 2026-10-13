@@ -1,0 +1,417 @@
+.dashboardContainer {
+  position: relative;
+  width: 100%;
+  max-width: 780px;
+  height: 310px;
+  margin: 0 auto;
+  border-radius: 20px;
+  border: 1px solid rgba(40, 85, 140, 0.45);
+  background: radial-gradient(ellipse at 58% 60%, #0d284f 0%, #08172e 52%, #050e1d 100%);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Subtle background grid */
+.gridBackground {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(56, 130, 210, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 130, 210, 0.08) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: radial-gradient(ellipse at 55% 55%, black 40%, rgba(0, 0, 0, 0.2) 80%, transparent 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Subtle blue-purple radial glow behind the main hill peak */
+.radialGlow {
+  position: absolute;
+  top: 15%;
+  left: 54%;
+  width: 380px;
+  height: 240px;
+  transform: translate(-50%, -20%);
+  background: radial-gradient(ellipse, rgba(0, 242, 254, 0.15) 0%, rgba(99, 102, 241, 0.2) 40%, transparent 70%);
+  filter: blur(40px);
+  pointer-events: none;
+  z-index: 1;
+  animation: pulseGlow 6s ease-in-out infinite alternate;
+}
+
+/* Floating particles */
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.particleCyan {
+  width: 4px;
+  height: 4px;
+  background: #00f2fe;
+  box-shadow: 0 0 8px #00f2fe;
+  animation: particleFloat 7s ease-in-out infinite;
+}
+
+.particlePurple {
+  width: 3.5px;
+  height: 3.5px;
+  background: #c084fc;
+  box-shadow: 0 0 8px #c084fc;
+  animation: particleFloat 9s ease-in-out infinite reverse;
+}
+
+/* Floating Metric Cards Layer */
+.cardsLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: auto;
+}
+
+/* Common Card Styling: Dark Translucent Teal Glass */
+.metricCard {
+  position: absolute;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(8, 38, 52, 0.88), rgba(4, 22, 34, 0.88));
+  border: 1px solid rgba(0, 230, 220, 0.35);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 13px 15px;
+  color: #f1f5f9;
+  user-select: none;
+}
+
+/* CARD A: Total Revenue Card (Top Left) */
+.revenueCard {
+  top: 18px;
+  left: 20px;
+  width: 215px;
+  height: 124px;
+  display: flex;
+  flex-direction: column;
+}
+
+.cardTitle {
+  font-size: 11px;
+  font-weight: 500;
+  color: #8be0e8;
+  letter-spacing: 0.3px;
+  margin: 0;
+}
+
+.growthText {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #00e699;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-top: 5px;
+}
+
+/* 8 Cyan Animated Bars */
+.barsContainer {
+  margin-top: auto;
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+  height: 48px;
+  padding-bottom: 2px;
+}
+
+.bar {
+  flex: 1;
+  display: block;
+  min-width: 5px;
+  max-width: 14px;
+  border-radius: 3px 3px 1px 1px;
+  background: linear-gradient(180deg, #4ef3e6 0%, #1d72fe 100%);
+  box-shadow: 0 0 6px rgba(78, 243, 230, 0.45);
+  transform-origin: bottom;
+  will-change: transform;
+}
+
+.bar1 { height: 18px; animation: bar1 1.4s ease-in-out infinite alternate; }
+.bar2 { height: 28px; animation: bar2 1.9s ease-in-out 0.2s infinite alternate; }
+.bar3 { height: 20px; animation: bar3 1.3s ease-in-out 0.4s infinite alternate; }
+.bar4 { height: 32px; animation: bar4 2.2s ease-in-out 0.1s infinite alternate; }
+.bar5 { height: 38px; animation: bar5 1.7s ease-in-out 0.5s infinite alternate; }
+.bar6 { height: 29px; animation: bar6 2.0s ease-in-out 0.25s infinite alternate; }
+.bar7 { height: 42px; animation: bar7 1.5s ease-in-out 0.6s infinite alternate; }
+.bar8 { height: 34px; animation: bar8 2.1s ease-in-out 0.35s infinite alternate; }
+
+/* CARD B: Sales Trend Card (Top Center) */
+.trendCard {
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 230px;
+  height: 96px;
+  display: flex;
+  flex-direction: column;
+}
+
+.trendHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.trendTitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: 0.2px;
+  margin: 0;
+}
+
+.trendBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 7px;
+  border-radius: 10px;
+  background: rgba(0, 180, 130, 0.2);
+  border: 1px solid rgba(0, 230, 150, 0.3);
+  color: #00f2c3;
+  font-size: 10.5px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.trendWaveContainer {
+  position: relative;
+  width: 100%;
+  height: 48px;
+  margin-top: 4px;
+  overflow: hidden;
+}
+
+.trendWaveSvg {
+  width: 200%;
+  height: 100%;
+  overflow: visible;
+  animation: trendWaveScroll 5s linear infinite;
+}
+
+.trendWavePath {
+  fill: none;
+  stroke: #00f2fe;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 5px rgba(0, 242, 254, 0.7));
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: trendUndulate 3s ease-in-out infinite alternate;
+}
+
+/* CARD C: Profit Donut Chart Card (Top Right) */
+.profitCard {
+  top: 18px;
+  right: 20px;
+  width: 216px;
+  height: 114px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+}
+
+.donutWrapper {
+  position: relative;
+  width: 66px;
+  height: 66px;
+  border-radius: 50%;
+  background: conic-gradient(
+    #00f2fe 0deg 175deg,
+    #3b82f6 175deg 260deg,
+    #a855f7 260deg 360deg
+  );
+  display: grid;
+  place-items: center;
+  box-shadow: 0 0 14px rgba(0, 242, 254, 0.35);
+  animation: donutGlow 4s ease-in-out infinite alternate;
+}
+
+.donutCenter {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #091c30;
+  display: grid;
+  place-items: center;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.donutPercentage {
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.5px;
+}
+
+.legendList {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding-left: 6px;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11.5px;
+  color: #cbd5e1;
+  font-weight: 500;
+}
+
+.legendDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dotSales {
+  background: #00f2fe;
+  box-shadow: 0 0 5px #00f2fe;
+}
+
+.dotRevenue {
+  background: #3b82f6;
+  box-shadow: 0 0 5px #3b82f6;
+}
+
+.dotProfit {
+  background: #a855f7;
+  box-shadow: 0 0 5px #a855f7;
+}
+
+/* MAIN HILL & AREA CHART (Spans Behind the Cards) */
+.mainChartSvg {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.solidMainLine {
+  fill: none;
+  stroke: url(#mainLineGrad);
+  stroke-width: 3.2;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 7px rgba(0, 242, 254, 0.7));
+}
+
+.dashedSecondaryLine {
+  fill: none;
+  stroke: #00f2fe;
+  stroke-width: 2.2;
+  stroke-dasharray: 8 8;
+  opacity: 0.85;
+  filter: drop-shadow(0 0 4px rgba(0, 242, 254, 0.5));
+  animation: dashStream 6s linear infinite;
+}
+
+.purpleAccentLine {
+  fill: none;
+  stroke: #8b5cf6;
+  stroke-width: 1.5;
+  opacity: 0.5;
+  filter: drop-shadow(0 0 4px rgba(139, 92, 246, 0.6));
+}
+
+.hillAreaFill {
+  fill: url(#hillAreaGrad);
+}
+
+.chartDot {
+  fill: #00f2fe;
+  filter: drop-shadow(0 0 6px #00f2fe);
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: dotPulse 2s ease-in-out infinite alternate;
+}
+
+.chartDotPurple {
+  fill: #c084fc;
+  filter: drop-shadow(0 0 6px #c084fc);
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: dotPulse 2.4s ease-in-out infinite alternate;
+}
+
+/* KEYFRAMES */
+
+/* Bar chart animations - Staggered, independent, smooth ease-in-out */
+@keyframes bar1 { 0% { transform: scaleY(0.38); opacity: 0.75; } 100% { transform: scaleY(1.35); opacity: 1; } }
+@keyframes bar2 { 0% { transform: scaleY(0.45); opacity: 0.8; } 100% { transform: scaleY(1.25); opacity: 1; } }
+@keyframes bar3 { 0% { transform: scaleY(0.40); opacity: 0.75; } 100% { transform: scaleY(1.40); opacity: 1; } }
+@keyframes bar4 { 0% { transform: scaleY(0.48); opacity: 0.8; } 100% { transform: scaleY(1.22); opacity: 1; } }
+@keyframes bar5 { 0% { transform: scaleY(0.42); opacity: 0.75; } 100% { transform: scaleY(1.28); opacity: 1; } }
+@keyframes bar6 { 0% { transform: scaleY(0.50); opacity: 0.8; } 100% { transform: scaleY(1.30); opacity: 1; } }
+@keyframes bar7 { 0% { transform: scaleY(0.36); opacity: 0.7; } 100% { transform: scaleY(1.18); opacity: 1; } }
+@keyframes bar8 { 0% { transform: scaleY(0.44); opacity: 0.75; } 100% { transform: scaleY(1.32); opacity: 1; } }
+
+/* Sales trend wave animation - continuous seamless scroll */
+@keyframes trendWaveScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes trendUndulate {
+  0% { transform: scaleY(0.88) translateY(1.5px); }
+  100% { transform: scaleY(1.12) translateY(-1.5px); }
+}
+
+/* Dashed line stream animation */
+@keyframes dashStream {
+  to { stroke-dashoffset: -64; }
+}
+
+/* Glowing dot pulse */
+@keyframes dotPulse {
+  0% { opacity: 0.5; transform: scale(0.85); }
+  100% { opacity: 1; transform: scale(1.2); }
+}
+
+/* Donut glow animation */
+@keyframes donutGlow {
+  0% { box-shadow: 0 0 10px rgba(0, 242, 254, 0.25); }
+  100% { box-shadow: 0 0 18px rgba(168, 85, 247, 0.45); }
+}
+
+/* Radial background glow pulse */
+@keyframes pulseGlow {
+  0% { opacity: 0.65; transform: translate(-50%, -20%) scale(0.95); }
+  100% { opacity: 1; transform: translate(-50%, -20%) scale(1.08); }
+}
+
+/* Particles float */
+@keyframes particleFloat {
+  0%, 100% { transform: translate(0, 0); opacity: 0.3; }
+  50% { transform: translate(8px, -15px); opacity: 0.9; }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .dashboardContainer *,
+  .dashboardContainer *::before,
+  .dashboardContainer *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
