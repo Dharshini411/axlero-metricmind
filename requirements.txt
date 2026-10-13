@@ -45,3 +45,6 @@ xxhash==4.0.1
 zstandard==0.25.0
 fastapi
 uvicorn
+pandas
+numpy
+python-dotenv
