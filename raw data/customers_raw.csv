@@ -1,0 +1,501 @@
+customer_id,customer_name,country,region,segment
+C0001,Customer 1,Australia,Oceania,Consumer
+C0002,Customer 2,UK,Europe,Consumer
+C0003,Customer 3,USA,North America,Small Business
+C0004,Customer 4,Australia,Oceania,Consumer
+C0005,Customer 5,France,Europe,Consumer
+C0006,Customer 6,Japan,Asia,Corporate
+C0007,Customer 7,USA,North America,Small Business
+C0008,Customer 8,USA,North America,Corporate
+C0009,Customer 9,Australia,Oceania,Corporate
+C0010,Customer 10,Germany,Europe,Consumer
+C0011,Customer 11,France,Europe,Corporate
+C0012,Customer 12,Australia,Oceania,Small Business
+C0013,Customer 13,France,Europe,Consumer
+C0014,Customer 14,France,Europe,Consumer
+C0015,Customer 15,Japan,Asia,Small Business
+C0016,Customer 16,USA,North America,Corporate
+C0017,Customer 17,UK,Europe,Corporate
+C0018,Customer 18,Japan,Asia,Corporate
+C0019,Customer 19,Japan,Asia,Consumer
+C0020,Customer 20,France,Europe,Consumer
+C0021,Customer 21,Canada,North America,Corporate
+C0022,Customer 22,USA,North America,Corporate
+C0023,Customer 23,Germany,Europe,Small Business
+C0024,Customer 24,Japan,Asia,Small Business
+C0025,Customer 25,UK,Europe,Consumer
+C0026,Customer 26,Canada,North America,Consumer
+C0027,Customer 27,Canada,North America,Corporate
+C0028,Customer 28,Germany,Europe,Corporate
+C0029,Customer 29,Japan,Asia,Corporate
+C0030,Customer 30,UK,Europe,Corporate
+C0031,Customer 31,USA,North America,Small Business
+C0032,Customer 32,India,Asia,Consumer
+C0033,Customer 33,UK,Europe,Consumer
+C0034,Customer 34,Germany,Europe,Consumer
+C0035,Customer 35,Canada,North America,Corporate
+C0036,Customer 36,USA,North America,Consumer
+C0037,Customer 37,UK,Europe,Consumer
+C0038,Customer 38,India,Asia,Consumer
+C0039,Customer 39,India,Asia,Consumer
+C0040,Customer 40,France,Europe,Corporate
+C0041,Customer 41,France,Europe,Consumer
+C0042,Customer 42,Australia,Oceania,Consumer
+C0043,Customer 43,Germany,Europe,Corporate
+C0044,Customer 44,Japan,Asia,Consumer
+C0045,Customer 45,UK,Europe,Consumer
+C0046,Customer 46,UK,Europe,Consumer
+C0047,Customer 47,Japan,Asia,Corporate
+C0048,Customer 48,Australia,Oceania,Consumer
+C0049,Customer 49,Canada,North America,Corporate
+C0050,Customer 50,Canada,North America,Consumer
+C0051,Customer 51,Australia,Oceania,Consumer
+C0052,Customer 52,Canada,North America,Consumer
+C0053,Customer 53,France,Europe,Consumer
+C0054,Customer 54,UK,Europe,Corporate
+C0055,Customer 55,Australia,Oceania,Corporate
+C0056,Customer 56,UK,Europe,Small Business
+C0057,Customer 57,Japan,Asia,Consumer
+C0058,Customer 58,India,Asia,Consumer
+C0059,Customer 59,France,Europe,Corporate
+C0060,Customer 60,USA,North America,Consumer
+C0061,Customer 61,France,Europe,Consumer
+C0062,Customer 62,Australia,Oceania,Consumer
+C0063,Customer 63,USA,North America,Consumer
+C0064,Customer 64,India,Asia,Small Business
+C0065,Customer 65,Australia,Oceania,Corporate
+C0066,Customer 66,Germany,Europe,Corporate
+C0067,Customer 67,UK,Europe,Consumer
+C0068,Customer 68,India,Asia,Consumer
+C0069,Customer 69,UK,Europe,Consumer
+C0070,Customer 70,Canada,North America,Consumer
+C0071,Customer 71,Germany,Europe,Consumer
+C0072,Customer 72,Germany,Europe,Corporate
+C0073,Customer 73,India,Asia,Corporate
+C0074,Customer 74,Germany,Europe,Consumer
+C0075,Customer 75,USA,North America,Small Business
+C0076,Customer 76,Germany,Europe,Corporate
+C0077,Customer 77,UK,Europe,Corporate
+C0078,Customer 78,UK,Europe,Corporate
+C0079,Customer 79,Australia,Oceania,Consumer
+C0080,Customer 80,UK,Europe,Consumer
+C0081,Customer 81,Australia,Oceania,Consumer
+C0082,Customer 82,UK,Europe,Corporate
+C0083,Customer 83,USA,North America,Consumer
+C0084,Customer 84,Japan,Asia,Consumer
+C0085,Customer 85,Australia,Oceania,Consumer
+C0086,Customer 86,France,Europe,Consumer
+C0087,Customer 87,Canada,North America,Small Business
+C0088,Customer 88,India,Asia,Corporate
+C0089,Customer 89,UK,Europe,Consumer
+C0090,Customer 90,Germany,Europe,Consumer
+C0091,Customer 91,Japan,Asia,Consumer
+C0092,Customer 92,UK,Europe,Consumer
+C0093,Customer 93,Germany,Europe,Consumer
+C0094,Customer 94,Canada,North America,Consumer
+C0095,Customer 95,Canada,North America,Consumer
+C0096,Customer 96,Canada,North America,Corporate
+C0097,Customer 97,Germany,Europe,Corporate
+C0098,Customer 98,UK,Europe,Consumer
+C0099,Customer 99,Canada,North America,Consumer
+C0100,Customer 100,USA,North America,Corporate
+C0101,Customer 101,Australia,Oceania,Consumer
+C0102,Customer 102,Germany,Europe,Small Business
+C0103,Customer 103,Germany,Europe,Corporate
+C0104,Customer 104,UK,Europe,Consumer
+C0105,Customer 105,Germany,Europe,Consumer
+C0106,Customer 106,Germany,Europe,Corporate
+C0107,Customer 107,Canada,North America,Consumer
+C0108,Customer 108,UK,Europe,Corporate
+C0109,Customer 109,Canada,North America,Small Business
+C0110,Customer 110,Australia,Oceania,Corporate
+C0111,Customer 111,Japan,Asia,Consumer
+C0112,Customer 112,Australia,Oceania,Corporate
+C0113,Customer 113,Japan,Asia,Consumer
+C0114,Customer 114,Canada,North America,Consumer
+C0115,Customer 115,Australia,Oceania,Small Business
+C0116,Customer 116,UK,Europe,Consumer
+C0117,Customer 117,India,Asia,Small Business
+C0118,Customer 118,Canada,North America,Small Business
+C0119,Customer 119,Japan,Asia,Consumer
+C0120,Customer 120,USA,North America,Consumer
+C0121,Customer 121,Japan,Asia,Consumer
+C0122,Customer 122,USA,North America,Consumer
+C0123,Customer 123,Germany,Europe,Consumer
+C0124,Customer 124,Australia,Oceania,Corporate
+C0125,Customer 125,USA,North America,Consumer
+C0126,Customer 126,Japan,Asia,Consumer
+C0127,Customer 127,Germany,Europe,Corporate
+C0128,Customer 128,India,Asia,Consumer
+C0129,Customer 129,UK,Europe,Corporate
+C0130,Customer 130,UK,Europe,Consumer
+C0131,Customer 131,UK,Europe,Consumer
+C0132,Customer 132,USA,North America,Corporate
+C0133,Customer 133,India,Asia,Corporate
+C0134,Customer 134,USA,North America,Small Business
+C0135,Customer 135,Australia,Oceania,Corporate
+C0136,Customer 136,USA,North America,Corporate
+C0137,Customer 137,India,Asia,Consumer
+C0138,Customer 138,India,Asia,Consumer
+C0139,Customer 139,Australia,Oceania,Corporate
+C0140,Customer 140,India,Asia,Corporate
+C0141,Customer 141,Japan,Asia,Small Business
+C0142,Customer 142,India,Asia,Consumer
+C0143,Customer 143,UK,Europe,Consumer
+C0144,Customer 144,Japan,Asia,Corporate
+C0145,Customer 145,Japan,Asia,Consumer
+C0146,Customer 146,Australia,Oceania,Small Business
+C0147,Customer 147,France,Europe,Small Business
+C0148,Customer 148,France,Europe,Consumer
+C0149,Customer 149,India,Asia,Corporate
+C0150,Customer 150,Japan,Asia,Corporate
+C0151,Customer 151,France,Europe,Consumer
+C0152,Customer 152,France,Europe,Small Business
+C0153,Customer 153,India,Asia,Consumer
+C0154,Customer 154,France,Europe,Corporate
+C0155,Customer 155,USA,North America,Consumer
+C0156,Customer 156,Germany,Europe,Small Business
+C0157,Customer 157,Australia,Oceania,Consumer
+C0158,Customer 158,Germany,Europe,Consumer
+C0159,Customer 159,India,Asia,Small Business
+C0160,Customer 160,UK,Europe,Consumer
+C0161,Customer 161,Australia,Oceania,Consumer
+C0162,Customer 162,India,Asia,Small Business
+C0163,Customer 163,Japan,Asia,Small Business
+C0164,Customer 164,UK,Europe,Corporate
+C0165,Customer 165,Germany,Europe,Corporate
+C0166,Customer 166,India,Asia,Consumer
+C0167,Customer 167,Japan,Asia,Consumer
+C0168,Customer 168,Australia,Oceania,Consumer
+C0169,Customer 169,Australia,Oceania,Corporate
+C0170,Customer 170,Canada,North America,Corporate
+C0171,Customer 171,Japan,Asia,Corporate
+C0172,Customer 172,USA,North America,Corporate
+C0173,Customer 173,France,Europe,Consumer
+C0174,Customer 174,UK,Europe,Consumer
+C0175,Customer 175,Japan,Asia,Consumer
+C0176,Customer 176,Canada,North America,Consumer
+C0177,Customer 177,France,Europe,Consumer
+C0178,Customer 178,France,Europe,Small Business
+C0179,Customer 179,India,Asia,Consumer
+C0180,Customer 180,France,Europe,Consumer
+C0181,Customer 181,USA,North America,Consumer
+C0182,Customer 182,Australia,Oceania,Corporate
+C0183,Customer 183,Canada,North America,Corporate
+C0184,Customer 184,France,Europe,Consumer
+C0185,Customer 185,India,Asia,Consumer
+C0186,Customer 186,USA,North America,Corporate
+C0187,Customer 187,Germany,Europe,Consumer
+C0188,Customer 188,Australia,Oceania,Corporate
+C0189,Customer 189,Australia,Oceania,Corporate
+C0190,Customer 190,Canada,North America,Consumer
+C0191,Customer 191,Australia,Oceania,Consumer
+C0192,Customer 192,France,Europe,Small Business
+C0193,Customer 193,India,Asia,Consumer
+C0194,Customer 194,Australia,Oceania,Consumer
+C0195,Customer 195,Australia,Oceania,Corporate
+C0196,Customer 196,Germany,Europe,Small Business
+C0197,Customer 197,Germany,Europe,Small Business
+C0198,Customer 198,UK,Europe,Corporate
+C0199,Customer 199,USA,North America,Consumer
+C0200,Customer 200,France,Europe,Consumer
+C0201,Customer 201,Australia,Oceania,Corporate
+C0202,Customer 202,Japan,Asia,Corporate
+C0203,Customer 203,Australia,Oceania,Consumer
+C0204,Customer 204,India,Asia,Small Business
+C0205,Customer 205,UK,Europe,Consumer
+C0206,Customer 206,USA,North America,Consumer
+C0207,Customer 207,Japan,Asia,Consumer
+C0208,Customer 208,UK,Europe,Consumer
+C0209,Customer 209,Canada,North America,Consumer
+C0210,Customer 210,USA,North America,Consumer
+C0211,Customer 211,Australia,Oceania,Consumer
+C0212,Customer 212,Australia,Oceania,Corporate
+C0213,Customer 213,USA,North America,Corporate
+C0214,Customer 214,Australia,Oceania,Corporate
+C0215,Customer 215,France,Europe,Small Business
+C0216,Customer 216,USA,North America,Consumer
+C0217,Customer 217,UK,Europe,Consumer
+C0218,Customer 218,USA,North America,Small Business
+C0219,Customer 219,Japan,Asia,Consumer
+C0220,Customer 220,Australia,Oceania,Small Business
+C0221,Customer 221,France,Europe,Consumer
+C0222,Customer 222,France,Europe,Small Business
+C0223,Customer 223,Canada,North America,Consumer
+C0224,Customer 224,UK,Europe,Small Business
+C0225,Customer 225,Germany,Europe,Consumer
+C0226,Customer 226,Germany,Europe,Small Business
+C0227,Customer 227,USA,North America,Consumer
+C0228,Customer 228,Canada,North America,Corporate
+C0229,Customer 229,India,Asia,Small Business
+C0230,Customer 230,USA,North America,Consumer
+C0231,Customer 231,Canada,North America,Corporate
+C0232,Customer 232,UK,Europe,Corporate
+C0233,Customer 233,UK,Europe,Consumer
+C0234,Customer 234,UK,Europe,Corporate
+C0235,Customer 235,UK,Europe,Corporate
+C0236,Customer 236,UK,Europe,Small Business
+C0237,Customer 237,Canada,North America,Consumer
+C0238,Customer 238,Canada,North America,Consumer
+C0239,Customer 239,France,Europe,Small Business
+C0240,Customer 240,Japan,Asia,Small Business
+C0241,Customer 241,Germany,Europe,Consumer
+C0242,Customer 242,Australia,Oceania,Corporate
+C0243,Customer 243,UK,Europe,Consumer
+C0244,Customer 244,India,Asia,Consumer
+C0245,Customer 245,Australia,Oceania,Consumer
+C0246,Customer 246,Canada,North America,Consumer
+C0247,Customer 247,India,Asia,Corporate
+C0248,Customer 248,India,Asia,Consumer
+C0249,Customer 249,India,Asia,Small Business
+C0250,Customer 250,France,Europe,Small Business
+C0251,Customer 251,Canada,North America,Corporate
+C0252,Customer 252,India,Asia,Consumer
+C0253,Customer 253,UK,Europe,Consumer
+C0254,Customer 254,USA,North America,Corporate
+C0255,Customer 255,India,Asia,Corporate
+C0256,Customer 256,France,Europe,Consumer
+C0257,Customer 257,Australia,Oceania,Small Business
+C0258,Customer 258,Canada,North America,Corporate
+C0259,Customer 259,Japan,Asia,Small Business
+C0260,Customer 260,France,Europe,Corporate
+C0261,Customer 261,India,Asia,Corporate
+C0262,Customer 262,Canada,North America,Consumer
+C0263,Customer 263,USA,North America,Small Business
+C0264,Customer 264,India,Asia,Small Business
+C0265,Customer 265,France,Europe,Consumer
+C0266,Customer 266,Germany,Europe,Consumer
+C0267,Customer 267,UK,Europe,Consumer
+C0268,Customer 268,Japan,Asia,Corporate
+C0269,Customer 269,Australia,Oceania,Small Business
+C0270,Customer 270,France,Europe,Consumer
+C0271,Customer 271,Canada,North America,Corporate
+C0272,Customer 272,Japan,Asia,Consumer
+C0273,Customer 273,Japan,Asia,Small Business
+C0274,Customer 274,Japan,Asia,Corporate
+C0275,Customer 275,India,Asia,Corporate
+C0276,Customer 276,UK,Europe,Consumer
+C0277,Customer 277,India,Asia,Consumer
+C0278,Customer 278,Canada,North America,Consumer
+C0279,Customer 279,India,Asia,Consumer
+C0280,Customer 280,Germany,Europe,Small Business
+C0281,Customer 281,UK,Europe,Corporate
+C0282,Customer 282,UK,Europe,Small Business
+C0283,Customer 283,Canada,North America,Small Business
+C0284,Customer 284,Australia,Oceania,Corporate
+C0285,Customer 285,Germany,Europe,Corporate
+C0286,Customer 286,France,Europe,Small Business
+C0287,Customer 287,India,Asia,Corporate
+C0288,Customer 288,USA,North America,Consumer
+C0289,Customer 289,India,Asia,Consumer
+C0290,Customer 290,Japan,Asia,Consumer
+C0291,Customer 291,India,Asia,Small Business
+C0292,Customer 292,France,Europe,Corporate
+C0293,Customer 293,India,Asia,Consumer
+C0294,Customer 294,Germany,Europe,Corporate
+C0295,Customer 295,Germany,Europe,Corporate
+C0296,Customer 296,UK,Europe,Consumer
+C0297,Customer 297,Canada,North America,Consumer
+C0298,Customer 298,Australia,Oceania,Corporate
+C0299,Customer 299,USA,North America,Consumer
+C0300,Customer 300,Japan,Asia,Corporate
+C0301,Customer 301,India,Asia,Consumer
+C0302,Customer 302,India,Asia,Small Business
+C0303,Customer 303,France,Europe,Corporate
+C0304,Customer 304,Canada,North America,Corporate
+C0305,Customer 305,Germany,Europe,Small Business
+C0306,Customer 306,USA,North America,Consumer
+C0307,Customer 307,UK,Europe,Consumer
+C0308,Customer 308,Germany,Europe,Consumer
+C0309,Customer 309,Japan,Asia,Corporate
+C0310,Customer 310,Canada,North America,Corporate
+C0311,Customer 311,Japan,Asia,Corporate
+C0312,Customer 312,Australia,Oceania,Consumer
+C0313,Customer 313,UK,Europe,Consumer
+C0314,Customer 314,Australia,Oceania,Consumer
+C0315,Customer 315,France,Europe,Consumer
+C0316,Customer 316,Japan,Asia,Corporate
+C0317,Customer 317,France,Europe,Consumer
+C0318,Customer 318,India,Asia,Consumer
+C0319,Customer 319,Australia,Oceania,Small Business
+C0320,Customer 320,Canada,North America,Consumer
+C0321,Customer 321,Japan,Asia,Consumer
+C0322,Customer 322,USA,North America,Corporate
+C0323,Customer 323,UK,Europe,Consumer
+C0324,Customer 324,Germany,Europe,Corporate
+C0325,Customer 325,Canada,North America,Small Business
+C0326,Customer 326,Canada,North America,Small Business
+C0327,Customer 327,France,Europe,Consumer
+C0328,Customer 328,Australia,Oceania,Small Business
+C0329,Customer 329,Japan,Asia,Consumer
+C0330,Customer 330,Japan,Asia,Consumer
+C0331,Customer 331,India,Asia,Consumer
+C0332,Customer 332,India,Asia,Small Business
+C0333,Customer 333,UK,Europe,Consumer
+C0334,Customer 334,France,Europe,Consumer
+C0335,Customer 335,Canada,North America,Corporate
+C0336,Customer 336,Japan,Asia,Consumer
+C0337,Customer 337,USA,North America,Consumer
+C0338,Customer 338,France,Europe,Consumer
+C0339,Customer 339,UK,Europe,Consumer
+C0340,Customer 340,UK,Europe,Consumer
+C0341,Customer 341,France,Europe,Consumer
+C0342,Customer 342,UK,Europe,Corporate
+C0343,Customer 343,France,Europe,Consumer
+C0344,Customer 344,Germany,Europe,Consumer
+C0345,Customer 345,France,Europe,Small Business
+C0346,Customer 346,Australia,Oceania,Consumer
+C0347,Customer 347,France,Europe,Corporate
+C0348,Customer 348,UK,Europe,Consumer
+C0349,Customer 349,Japan,Asia,Consumer
+C0350,Customer 350,Australia,Oceania,Consumer
+C0351,Customer 351,UK,Europe,Consumer
+C0352,Customer 352,India,Asia,Consumer
+C0353,Customer 353,India,Asia,Consumer
+C0354,Customer 354,Japan,Asia,Consumer
+C0355,Customer 355,Japan,Asia,Consumer
+C0356,Customer 356,Australia,Oceania,Consumer
+C0357,Customer 357,Germany,Europe,Consumer
+C0358,Customer 358,Japan,Asia,Consumer
+C0359,Customer 359,India,Asia,Consumer
+C0360,Customer 360,France,Europe,Corporate
+C0361,Customer 361,UK,Europe,Consumer
+C0362,Customer 362,India,Asia,Corporate
+C0363,Customer 363,India,Asia,Corporate
+C0364,Customer 364,Germany,Europe,Consumer
+C0365,Customer 365,Australia,Oceania,Small Business
+C0366,Customer 366,Australia,Oceania,Small Business
+C0367,Customer 367,Canada,North America,Consumer
+C0368,Customer 368,Germany,Europe,Consumer
+C0369,Customer 369,France,Europe,Corporate
+C0370,Customer 370,Australia,Oceania,Corporate
+C0371,Customer 371,UK,Europe,Consumer
+C0372,Customer 372,Japan,Asia,Consumer
+C0373,Customer 373,Germany,Europe,Consumer
+C0374,Customer 374,Japan,Asia,Consumer
+C0375,Customer 375,India,Asia,Corporate
+C0376,Customer 376,UK,Europe,Consumer
+C0377,Customer 377,UK,Europe,Consumer
+C0378,Customer 378,India,Asia,Corporate
+C0379,Customer 379,Germany,Europe,Consumer
+C0380,Customer 380,India,Asia,Consumer
+C0381,Customer 381,Japan,Asia,Corporate
+C0382,Customer 382,Canada,North America,Small Business
+C0383,Customer 383,UK,Europe,Consumer
+C0384,Customer 384,USA,North America,Consumer
+C0385,Customer 385,USA,North America,Consumer
+C0386,Customer 386,Japan,Asia,Consumer
+C0387,Customer 387,France,Europe,Consumer
+C0388,Customer 388,Australia,Oceania,Consumer
+C0389,Customer 389,India,Asia,Consumer
+C0390,Customer 390,India,Asia,Consumer
+C0391,Customer 391,France,Europe,Consumer
+C0392,Customer 392,France,Europe,Consumer
+C0393,Customer 393,Japan,Asia,Consumer
+C0394,Customer 394,Japan,Asia,Consumer
+C0395,Customer 395,France,Europe,Consumer
+C0396,Customer 396,UK,Europe,Small Business
+C0397,Customer 397,Japan,Asia,Corporate
+C0398,Customer 398,Canada,North America,Corporate
+C0399,Customer 399,Japan,Asia,Corporate
+C0400,Customer 400,India,Asia,Consumer
+C0401,Customer 401,Japan,Asia,Consumer
+C0402,Customer 402,UK,Europe,Consumer
+C0403,Customer 403,France,Europe,Corporate
+C0404,Customer 404,India,Asia,Corporate
+C0405,Customer 405,Japan,Asia,Consumer
+C0406,Customer 406,UK,Europe,Consumer
+C0407,Customer 407,Canada,North America,Consumer
+C0408,Customer 408,Japan,Asia,Consumer
+C0409,Customer 409,UK,Europe,Corporate
+C0410,Customer 410,Canada,North America,Corporate
+C0411,Customer 411,France,Europe,Consumer
+C0412,Customer 412,Japan,Asia,Small Business
+C0413,Customer 413,Canada,North America,Corporate
+C0414,Customer 414,India,Asia,Consumer
+C0415,Customer 415,France,Europe,Consumer
+C0416,Customer 416,India,Asia,Consumer
+C0417,Customer 417,USA,North America,Consumer
+C0418,Customer 418,Germany,Europe,Consumer
+C0419,Customer 419,Japan,Asia,Consumer
+C0420,Customer 420,Canada,North America,Consumer
+C0421,Customer 421,Germany,Europe,Consumer
+C0422,Customer 422,Germany,Europe,Small Business
+C0423,Customer 423,Canada,North America,Consumer
+C0424,Customer 424,France,Europe,Consumer
+C0425,Customer 425,Japan,Asia,Consumer
+C0426,Customer 426,USA,North America,Small Business
+C0427,Customer 427,India,Asia,Consumer
+C0428,Customer 428,UK,Europe,Consumer
+C0429,Customer 429,India,Asia,Small Business
+C0430,Customer 430,UK,Europe,Small Business
+C0431,Customer 431,India,Asia,Corporate
+C0432,Customer 432,Canada,North America,Consumer
+C0433,Customer 433,USA,North America,Consumer
+C0434,Customer 434,Japan,Asia,Corporate
+C0435,Customer 435,UK,Europe,Small Business
+C0436,Customer 436,Japan,Asia,Corporate
+C0437,Customer 437,Japan,Asia,Corporate
+C0438,Customer 438,Japan,Asia,Consumer
+C0439,Customer 439,Australia,Oceania,Corporate
+C0440,Customer 440,France,Europe,Consumer
+C0441,Customer 441,India,Asia,Consumer
+C0442,Customer 442,Japan,Asia,Consumer
+C0443,Customer 443,India,Asia,Consumer
+C0444,Customer 444,Japan,Asia,Consumer
+C0445,Customer 445,UK,Europe,Consumer
+C0446,Customer 446,France,Europe,Corporate
+C0447,Customer 447,France,Europe,Consumer
+C0448,Customer 448,Canada,North America,Corporate
+C0449,Customer 449,Australia,Oceania,Consumer
+C0450,Customer 450,Canada,North America,Consumer
+C0451,Customer 451,Canada,North America,Consumer
+C0452,Customer 452,Canada,North America,Consumer
+C0453,Customer 453,Canada,North America,Consumer
+C0454,Customer 454,Canada,North America,Consumer
+C0455,Customer 455,USA,North America,Consumer
+C0456,Customer 456,France,Europe,Small Business
+C0457,Customer 457,Canada,North America,Consumer
+C0458,Customer 458,Japan,Asia,Corporate
+C0459,Customer 459,France,Europe,Consumer
+C0460,Customer 460,France,Europe,Corporate
+C0461,Customer 461,Germany,Europe,Corporate
+C0462,Customer 462,USA,North America,Corporate
+C0463,Customer 463,Canada,North America,Consumer
+C0464,Customer 464,India,Asia,Consumer
+C0465,Customer 465,UK,Europe,Consumer
+C0466,Customer 466,Australia,Oceania,Small Business
+C0467,Customer 467,Japan,Asia,Corporate
+C0468,Customer 468,India,Asia,Small Business
+C0469,Customer 469,USA,North America,Consumer
+C0470,Customer 470,UK,Europe,Corporate
+C0471,Customer 471,USA,North America,Small Business
+C0472,Customer 472,Japan,Asia,Consumer
+C0473,Customer 473,France,Europe,Consumer
+C0474,Customer 474,UK,Europe,Corporate
+C0475,Customer 475,France,Europe,Corporate
+C0476,Customer 476,Japan,Asia,Corporate
+C0477,Customer 477,India,Asia,Consumer
+C0478,Customer 478,Japan,Asia,Corporate
+C0479,Customer 479,India,Asia,Consumer
+C0480,Customer 480,UK,Europe,Consumer
+C0481,Customer 481,UK,Europe,Consumer
+C0482,Customer 482,Canada,North America,Corporate
+C0483,Customer 483,USA,North America,Corporate
+C0484,Customer 484,Canada,North America,Consumer
+C0485,Customer 485,USA,North America,Consumer
+C0486,Customer 486,Canada,North America,Small Business
+C0487,Customer 487,France,Europe,Consumer
+C0488,Customer 488,UK,Europe,Corporate
+C0489,Customer 489,India,Asia,Consumer
+C0490,Customer 490,USA,North America,Consumer
+C0491,Customer 491,Japan,Asia,Consumer
+C0492,Customer 492,USA,North America,Consumer
+C0493,Customer 493,India,Asia,Corporate
+C0494,Customer 494,Canada,North America,Consumer
+C0495,Customer 495,USA,North America,Consumer
+C0496,Customer 496,Australia,Oceania,Small Business
+C0497,Customer 497,France,Europe,Consumer
+C0498,Customer 498,UK,Europe,Consumer
+C0499,Customer 499,India,Asia,Small Business
+C0500,Customer 500,UK,Europe,Corporate

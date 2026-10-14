@@ -1,0 +1,61 @@
+[0m17:35:46.390319 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001D7EFAEB9A0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001D7F22DFAF0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001D7F22DFD00>]}
+
+
+============================== 17:35:46.395674 | 7251d00f-d76f-4fe1-9be0-9842279ba4d1 ==============================
+[0m17:35:46.395674 [info ] [MainThread]: Running with dbt=1.12.4
+[0m17:35:46.395674 [debug] [MainThread]: running dbt with arguments {'version_check': 'True', 'no_print': 'None', 'maximum_seed_size_mib': '1', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'static_parser': 'True', 'target_path': 'None', 'printer_width': '80', 'write_json': 'True', 'empty': 'None', 'log_cache_events': 'False', 'introspect': 'True', 'cache_selected_only': 'False', 'log_format': 'default', 'debug': 'False', 'fail_fast': 'False', 'partial_parse': 'True', 'send_anonymous_usage_stats': 'True', 'quiet': 'False', 'warn_error': 'None', 'profiles_dir': 'C:\\Users\\spprp\\.dbt', 'indirect_selection': 'eager', 'hints_enabled': 'True', 'invocation_command': 'dbt init metricmind_dbt', 'use_experimental_parser': 'False', 'use_colors': 'True', 'log_path': 'logs'}
+[0m17:35:46.455181 [info ] [MainThread]: Creating dbt configuration folder at C:\Users\spprp\.dbt
+[0m17:35:46.459468 [debug] [MainThread]: Starter project path: C:\Users\spprp\OneDrive\Desktop\MetricMind_Raw_Dataset\.venv\lib\site-packages\dbt\include\starter_project
+[0m17:35:46.589772 [info ] [MainThread]: Setting up your profile.
+[0m21:15:57.115311 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000025E3E5638E0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000025E40D4FAF0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000025E40D4FF70>]}
+
+
+============================== 21:15:57.128413 | 08ad70d1-4ee3-4705-adec-cbdac018a649 ==============================
+[0m21:15:57.128413 [info ] [MainThread]: Running with dbt=1.12.4
+[0m21:15:57.128413 [debug] [MainThread]: running dbt with arguments {'static_parser': 'True', 'no_print': 'None', 'version_check': 'True', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'target_path': 'None', 'maximum_seed_size_mib': '1', 'printer_width': '80', 'write_json': 'True', 'introspect': 'True', 'log_cache_events': 'False', 'empty': 'None', 'cache_selected_only': 'False', 'log_format': 'default', 'debug': 'False', 'fail_fast': 'False', 'profiles_dir': 'C:\\Users\\spprp\\.dbt', 'send_anonymous_usage_stats': 'True', 'quiet': 'False', 'warn_error': 'None', 'partial_parse': 'True', 'invocation_command': 'dbt init metricmind_dbt', 'hints_enabled': 'True', 'indirect_selection': 'eager', 'use_experimental_parser': 'False', 'use_colors': 'True', 'log_path': 'logs'}
+[0m21:15:57.178257 [info ] [MainThread]: A project called metricmind_dbt already exists here.
+[0m21:15:57.178257 [debug] [MainThread]: Command `dbt init` succeeded at 21:15:57.178257 after 0.26 seconds
+[0m21:15:57.184189 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000025E3E5638E0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000025E40D4F490>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000025E40D4FB20>]}
+[0m21:15:57.184189 [debug] [MainThread]: Flushing usage events
+[0m21:15:58.653864 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m21:19:14.400614 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x00000215F44EB940>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x00000215F6CDFAF0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x00000215F6CDFFD0>]}
+
+
+============================== 21:19:14.407969 | f8b9f4b5-4b4a-4547-9a83-ad46304adbf9 ==============================
+[0m21:19:14.407969 [info ] [MainThread]: Running with dbt=1.12.4
+[0m21:19:14.407969 [debug] [MainThread]: running dbt with arguments {'maximum_seed_size_mib': '1', 'no_print': 'None', 'version_check': 'True', 'target_path': 'None', 'static_parser': 'True', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'printer_width': '80', 'write_json': 'True', 'empty': 'None', 'log_cache_events': 'False', 'introspect': 'True', 'cache_selected_only': 'False', 'log_format': 'default', 'debug': 'False', 'fail_fast': 'False', 'profiles_dir': 'C:\\Users\\spprp\\.dbt', 'send_anonymous_usage_stats': 'True', 'quiet': 'False', 'warn_error': 'None', 'partial_parse': 'True', 'use_colors': 'True', 'hints_enabled': 'True', 'invocation_command': 'dbt init metricmind_dbt', 'use_experimental_parser': 'False', 'indirect_selection': 'eager', 'log_path': 'logs'}
+[0m21:19:14.447858 [info ] [MainThread]: A project called metricmind_dbt already exists here.
+[0m21:19:14.451041 [debug] [MainThread]: Command `dbt init` succeeded at 21:19:14.451041 after 0.44 seconds
+[0m21:19:14.451041 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x00000215F44EB940>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x00000215F6CDF490>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x00000215F6CDFB20>]}
+[0m21:19:14.453055 [debug] [MainThread]: Flushing usage events
+[0m21:19:16.043726 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m13:32:34.667037 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001AEC66C3910>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001AEC8EBC6A0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001AEC8EBC4C0>]}
+
+
+============================== 13:32:34.678646 | 338c9598-06bc-424d-88c4-5802b5020b10 ==============================
+[0m13:32:34.678646 [info ] [MainThread]: Running with dbt=1.12.4
+[0m13:32:34.683185 [debug] [MainThread]: running dbt with arguments {'static_parser': 'True', 'no_print': 'None', 'version_check': 'True', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'maximum_seed_size_mib': '1', 'target_path': 'None', 'printer_width': '80', 'write_json': 'True', 'introspect': 'True', 'log_cache_events': 'False', 'empty': 'None', 'cache_selected_only': 'False', 'log_format': 'default', 'debug': 'False', 'fail_fast': 'False', 'partial_parse': 'True', 'send_anonymous_usage_stats': 'True', 'quiet': 'False', 'warn_error': 'None', 'profiles_dir': 'C:\\Users\\spprp\\.dbt', 'use_colors': 'True', 'hints_enabled': 'True', 'invocation_command': 'dbt ls --resource-type source', 'use_experimental_parser': 'False', 'indirect_selection': 'eager', 'log_path': 'logs'}
+[0m13:32:34.683185 [error] [MainThread]: [[31mERROR[0m]: Encountered an error:
+Runtime Error
+  No dbt_project.yml found at expected path C:\Users\spprp\OneDrive\Desktop\MetricMind_Raw_Dataset\dbt_project.yml
+  Verify that each entry within packages.yml (and their transitive dependencies) contains a file named dbt_project.yml
+  
+[0m13:32:34.687222 [debug] [MainThread]: Command `dbt ls` failed at 13:32:34.687222 after 0.40 seconds
+[0m13:32:34.689233 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001AEC66C3910>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001AEC8EBC790>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001AEC8EBC760>]}
+[0m13:32:34.691176 [debug] [MainThread]: Flushing usage events
+[0m13:32:36.062874 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m14:05:17.369794 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001893296B970>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001893505E920>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001893505E2C0>]}
+
+
+============================== 14:05:17.380379 | b5807ca1-2749-4a3d-a0d8-b112996b802b ==============================
+[0m14:05:17.380379 [info ] [MainThread]: Running with dbt=1.12.4
+[0m14:05:17.380379 [debug] [MainThread]: running dbt with arguments {'version_check': 'True', 'no_print': 'None', 'static_parser': 'True', 'target_path': 'None', 'maximum_seed_size_mib': '1', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'printer_width': '80', 'write_json': 'True', 'introspect': 'True', 'log_cache_events': 'False', 'empty': 'False', 'cache_selected_only': 'False', 'fail_fast': 'False', 'debug': 'False', 'log_format': 'default', 'partial_parse': 'True', 'send_anonymous_usage_stats': 'True', 'quiet': 'False', 'warn_error': 'None', 'profiles_dir': 'C:\\Users\\spprp\\.dbt', 'use_colors': 'True', 'hints_enabled': 'True', 'invocation_command': 'dbt build', 'use_experimental_parser': 'False', 'indirect_selection': 'eager', 'log_path': 'logs'}
+[0m14:05:17.382393 [error] [MainThread]: [[31mERROR[0m]: Encountered an error:
+Runtime Error
+  No dbt_project.yml found at expected path C:\Users\spprp\OneDrive\Desktop\MetricMind_Raw_Dataset\dbt_project.yml
+  Verify that each entry within packages.yml (and their transitive dependencies) contains a file named dbt_project.yml
+  
+[0m14:05:17.384958 [debug] [MainThread]: Command `dbt build` failed at 14:05:17.384958 after 0.35 seconds
+[0m14:05:17.386605 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001893296B970>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001893505E830>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001893505E920>]}
+[0m14:05:17.387990 [debug] [MainThread]: Flushing usage events
+[0m14:05:18.768947 [debug] [MainThread]: An error was encountered while trying to flush usage events
