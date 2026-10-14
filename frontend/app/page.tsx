@@ -1,1587 +1,671 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
-import MetricMindAnimation from "@/components/MetricMindAnimation";
+import React, { useState, useEffect, useRef } from "react";
+import {
+  BarChart2,
+  Database,
+  Sparkles,
+  Settings as SettingsIcon,
+  Plus,
+  Send,
+  Pin,
+  Menu,
+  X,
+  Code2,
+  Eye,
+  CheckCircle2,
+  AlertCircle,
+  HelpCircle,
+  ChevronRight,
+  TrendingUp,
+} from "lucide-react";
 
-type Row = Record<string, unknown>;
+import dynamic from "next/dynamic";
+import AnimatedAnalyticsHero from "@/components/AnimatedAnalyticsHero";
+import MetricMindDataTable from "@/components/MetricMindDataTable";
 
-type Message = {
-  id: number;
+const MetricMindEChart = dynamic(() => import("@/components/MetricMindEChart"), {
+  ssr: false,
+});
+import ViewSqlModal, { SqlTrace } from "@/components/ViewSqlModal";
+import ViewApiCallModal, { ApiTrace } from "@/components/ViewApiCallModal";
+import DataSourcesView from "@/components/DataSourcesView";
+import AnalyticsView from "@/components/AnalyticsView";
+import IntegrationsView from "@/components/IntegrationsView";
+import SettingsView from "@/components/SettingsView";
+import { API_BASE_URL, fetchHealth } from "@/mock/api";
+
+type ActiveTab = "chat" | "analytics" | "data_sources" | "integrations" | "settings";
+
+interface KpiItem {
+  label: string;
+  value: unknown;
+  formatted_value: string;
+  description?: string;
+}
+
+interface ChartMeta {
+  chart_type: "bar" | "line" | "donut" | "horizontal_bar" | "kpi" | "table";
+  title: string;
+  x_key?: string;
+  y_keys: string[];
+  series_names?: string[];
+  x_label?: string;
+  y_label?: string;
+}
+
+interface SecondaryBreakdown {
+  dimension: string;
+  title: string;
+  data: Record<string, unknown>[];
+  explanation: string;
+}
+
+interface Message {
+  id: string;
   role: "user" | "assistant";
   content: string;
-  data?: Row[];
-  sql?: string;
-  apiResponse?: unknown;
-};
-
-type Pin = {
-  question: string;
-};
-
-function Icon({ name }: { name: string }) {
-  const icons: Record<string, React.ReactNode> = {
-    chart: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <path d="M18 20V10" />
-        <path d="M12 20V4" />
-        <path d="M6 20v-6" />
-      </svg>
-    ),
-    database: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <ellipse cx="12" cy="5" rx="9" ry="3" />
-        <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
-        <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
-      </svg>
-    ),
-    spark: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z" />
-      </svg>
-    ),
-    settings: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <circle cx="12" cy="12" r="3" />
-        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
-      </svg>
-    ),
-    plus: (
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <line x1="12" y1="5" x2="12" y2="19" />
-        <line x1="5" y1="12" x2="19" y2="12" />
-      </svg>
-    ),
-    send: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <line x1="22" y1="2" x2="11" y2="13" />
-        <polygon points="22 2 15 22 11 13 2 9 22 2" fill="white" fillOpacity="0.15" />
-      </svg>
-    ),
-    pin: (
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <line x1="12" y1="17" x2="12" y2="22" />
-        <path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.89A2 2 0 0 1 15 10.77V5a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v5.77a2 2 0 0 1-1.11 1.79l-1.78.89A2 2 0 0 0 5 15.24Z" />
-      </svg>
-    ),
-    menu: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <line x1="4" y1="7" x2="20" y2="7" />
-        <line x1="4" y1="12" x2="20" y2="12" />
-        <line x1="4" y1="17" x2="20" y2="17" />
-      </svg>
-    ),
-    close: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <line x1="18" y1="6" x2="6" y2="18" />
-        <line x1="6" y1="6" x2="18" y2="18" />
-      </svg>
-    ),
-    code: (
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <polyline points="16 18 22 12 16 6" />
-        <polyline points="8 6 2 12 8 18" />
-      </svg>
-    ),
-    grip: (
-      <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-        <path d="M14 14H12V12H14V14ZM14 10H12V8H14V10ZM10 14H8V12H10V14ZM14 6H12V4H14V6ZM10 10H8V8H10V10ZM6 14H4V12H6V14Z" opacity="0.35" />
-      </svg>
-    ),
-  };
-
-  return <>{icons[name] || icons.spark}</>;
+  data?: Record<string, unknown>[];
+  chart_meta?: ChartMeta | null;
+  kpi_items?: KpiItem[];
+  sql_trace?: SqlTrace;
+  api_trace?: ApiTrace;
+  secondary_breakdown?: SecondaryBreakdown;
+  timestamp: string;
+  isError?: boolean;
 }
 
-function getRows(result: unknown): Row[] {
-  if (!result || typeof result !== "object") return [];
-  const obj = result as Record<string, unknown>;
-  const data = Array.isArray(obj.data)
-    ? obj.data
-    : Array.isArray(obj.results)
-    ? obj.results
-    : [];
-
-  return data.filter(
-    (item): item is Row =>
-      !!item && typeof item === "object" && !Array.isArray(item)
-  );
-}
-
-function getSql(result: unknown): string | undefined {
-  if (!result || typeof result !== "object") return undefined;
-  const obj = result as Record<string, unknown>;
-
-  if (typeof obj.sql === "string") return obj.sql;
-  if (typeof obj.generated_sql === "string") return obj.generated_sql;
-
-  if (obj.query && typeof obj.query === "object") {
-    const query = obj.query as Record<string, unknown>;
-    if (typeof query.sql === "string") return query.sql;
-  }
-  return undefined;
-}
-
-function displayValue(value: unknown) {
-  if (value === null || value === undefined) return "—";
-  if (typeof value === "number") return value.toLocaleString("en-US");
-  if (typeof value === "object") return JSON.stringify(value);
-  return String(value);
-}
-
-export default function Home() {
-  const [question, setQuestion] = useState("");
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState("chat");
+export default function MetricMindApp() {
+  const [activeTab, setActiveTab] = useState<ActiveTab>("chat");
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [pins, setPins] = useState<Pin[]>([]);
-  const [modal, setModal] = useState<"api" | "sql" | null>(null);
-  const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [backendConnected, setBackendConnected] = useState(true);
 
+  // Chat state
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [inputValue, setInputValue] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [pinnedQuestions, setPinnedQuestions] = useState<string[]>([]);
+  const [recentChats, setRecentChats] = useState<string[]>([]);
+
+  // Modals state
+  const [activeSqlTrace, setActiveSqlTrace] = useState<SqlTrace | null>(null);
+  const [activeApiTrace, setActiveApiTrace] = useState<ApiTrace | null>(null);
+  const [activeRawResponse, setActiveRawResponse] = useState<unknown>(null);
+
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Check health periodically
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem("metricmind-pinned");
-      if (saved) setPins(JSON.parse(saved));
-    } catch {
-      // Ignore invalid saved preferences
-    }
+    const checkConnection = async () => {
+      const health = await fetchHealth();
+      setBackendConnected(health !== null);
+    };
+    checkConnection();
+    const interval = setInterval(checkConnection, 10000);
+    return () => clearInterval(interval);
   }, []);
 
-  function togglePin(questionText: string) {
-    setPins((oldPins) => {
-      const exists = oldPins.some((p) => p.question === questionText);
-      const next = exists
-        ? oldPins.filter((p) => p.question !== questionText)
-        : [...oldPins, { question: questionText }];
+  // Auto scroll chat
+  useEffect(() => {
+    if (activeTab === "chat" && messages.length > 0) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, activeTab]);
 
-      try {
-        localStorage.setItem("metricmind-pinned", JSON.stringify(next));
-      } catch {
-        // Ignored
-      }
-      return next;
-    });
-  }
+  const handleSendQuestion = async (textToSend?: string) => {
+    const question = (textToSend || inputValue).trim();
+    if (!question || loading) return;
 
-  async function sendQuestion(text = question) {
-    const cleaned = text.trim();
-    if (!cleaned || loading) return;
+    const userMsg: Message = {
+      id: `user-${Date.now()}`,
+      role: "user",
+      content: question,
+      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    };
 
-    setQuestion("");
-    setPage("chat");
-
-    setMessages((old) => [
-      ...old,
-      { id: Date.now(), role: "user", content: cleaned },
-    ]);
+    setMessages((prev) => [...prev, userMsg]);
+    setInputValue("");
     setLoading(true);
 
+    // Update recent chats
+    if (!recentChats.includes(question)) {
+      setRecentChats((prev) => [question, ...prev.slice(0, 5)]);
+    }
+
     try {
-      const response = await fetch("/api/chat", {
+      // Call frontend API route which proxies to FastAPI backend
+      let res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question: cleaned }),
+        body: JSON.stringify({ question }),
       });
 
-      const contentType = response.headers.get("content-type") || "";
-      if (!contentType.includes("application/json")) {
-        throw new Error(`API returned a non-JSON response (${response.status}).`);
+      if (!res.ok && res.status === 404) {
+        res = await fetch(`${API_BASE_URL}/api/chat`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ question }),
+        });
       }
 
-      const result: unknown = await response.json();
-
-      if (!response.ok) {
-        const errorObj = result as Record<string, unknown>;
-        throw new Error(
-          typeof errorObj.error === "string"
-            ? errorObj.error
-            : `Request failed (${response.status})`
-        );
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => ({}));
+        throw new Error(errJson.detail || errJson.error || `HTTP error ${res.status}`);
       }
 
-      const obj = result as Record<string, unknown>;
-      const rows = getRows(result);
-      const answer =
-        (typeof obj.answer === "string" && obj.answer) ||
-        (typeof obj.response === "string" && obj.response) ||
-        (typeof obj.message === "string" && obj.message) ||
-        (rows.length
-          ? `I found ${rows.length} rows for your question.`
-          : "The API returned a response. You can inspect the API details below.");
+      const data = await res.json();
 
-      setMessages((old) => [
-        ...old,
-        {
-          id: Date.now() + 1,
-          role: "assistant",
-          content: answer,
-          data: rows,
-          sql: getSql(result),
-          apiResponse: result,
-        },
-      ]);
-    } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "Unable to connect to the AI API.";
+      const assistantMsg: Message = {
+        id: `assistant-${Date.now()}`,
+        role: "assistant",
+        content: data.explanation || data.answer || data.response || data.message || "Query processed successfully.",
+        data: data.data || data.results,
+        chart_meta: data.chart_meta,
+        kpi_items: data.kpi_items,
+        sql_trace: data.sql_trace,
+        api_trace: data.api_trace,
+        secondary_breakdown: data.secondary_breakdown,
+        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      };
 
-      setMessages((old) => [
-        ...old,
-        {
-          id: Date.now() + 1,
-          role: "assistant",
-          content: `Unable to retrieve live result: ${message}`,
-        },
-      ]);
+      setMessages((prev) => [...prev, assistantMsg]);
+    } catch (err: unknown) {
+      const errorMsg = err instanceof Error ? err.message : "Failed to connect to analytical engine";
+      const errorAssistantMsg: Message = {
+        id: `assistant-err-${Date.now()}`,
+        role: "assistant",
+        content: `Error executing analytical plan: ${errorMsg}. Please ensure the MetricMind backend is running at ${API_BASE_URL}.`,
+        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        isError: true,
+      };
+      setMessages((prev) => [...prev, errorAssistantMsg]);
     } finally {
       setLoading(false);
     }
-  }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSendQuestion();
+    }
+  };
+
+  const handleNewChat = () => {
+    setMessages([]);
+    setActiveTab("chat");
+  };
+
+  const togglePin = (q: string) => {
+    if (pinnedQuestions.includes(q)) {
+      setPinnedQuestions(pinnedQuestions.filter((item) => item !== q));
+    } else {
+      setPinnedQuestions([...pinnedQuestions, q]);
+    }
+  };
 
   return (
-    <main className="metricApp">
-      {/* LEFT SIDEBAR - Exact match to Reference Screenshot */}
-      {sidebarOpen && (
-        <aside className="sidebar">
-          {/* Top Brand */}
-          <div className="brand">
-            <div className="brandIcon">M</div>
-            <div className="brandText">
-              <strong>MetricMind</strong>
-              <span>SEMANTIC BI</span>
+    <div className="flex h-screen w-screen overflow-hidden bg-[#070e1c] text-slate-100 font-sans">
+      {/* 1. LEFT SIDEBAR */}
+      <aside
+        className={`${
+          sidebarOpen ? "w-64" : "w-0 -translate-x-full"
+        } relative flex flex-col justify-between border-r border-slate-800/80 bg-[#060c18] transition-all duration-300 ease-in-out lg:static lg:translate-x-0 z-30`}
+      >
+        <div className="flex flex-col h-full overflow-y-auto p-4 custom-scrollbar">
+          {/* Logo */}
+          <div className="flex items-center gap-3 px-1 py-2">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-violet-600 via-indigo-600 to-cyan-400 font-bold text-white shadow-lg shadow-indigo-900/40">
+              M
+            </div>
+            <div>
+              <div className="text-sm font-bold tracking-tight text-white">MetricMind</div>
+              <div className="text-[10px] font-semibold tracking-wider text-cyan-400">
+                SEMANTIC BI
+              </div>
             </div>
           </div>
 
           {/* New Chat Button */}
           <button
-            className="newChatBtn"
-            onClick={() => {
-              setMessages([]);
-              setPage("chat");
-            }}
+            onClick={handleNewChat}
+            className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 via-purple-600 to-blue-600 px-4 py-2.5 text-xs font-semibold text-white shadow-lg shadow-purple-950/50 transition-all hover:opacity-95 hover:shadow-cyan-950/50"
           >
-            <Icon name="plus" />
+            <Plus size={15} />
             <span>New Chat</span>
           </button>
 
-          {/* WORKSPACE Navigation */}
-          <div className="sidebarNavSection">
-            <div className="sectionLabel">WORKSPACE</div>
-            {[
-              ["chart", "Analytics", "analytics"],
-              ["database", "Data Sources", "sources"],
-              ["spark", "Integrations", "integrations"],
-              ["settings", "Settings", "settings"],
-            ].map(([icon, label, key]) => (
-              <button
-                key={key}
-                className={`navItem ${page === key ? "navActive" : ""}`}
-                onClick={() => setPage(key)}
-              >
-                <Icon name={icon} />
-                <span>{label}</span>
-              </button>
-            ))}
-          </div>
-
-          {/* PINNED Section */}
-          <div className="sidebarNavSection">
-            <div className="sectionLabel">PINNED</div>
-            {pins.length === 0 ? (
-              <p className="emptyHint">Pin important questions to keep them here.</p>
-            ) : (
-              pins.map((pin) => (
-                <div className="pinItemRow" key={pin.question}>
+          {/* Workspace Nav Items */}
+          <div className="mt-6">
+            <div className="mb-2 px-2 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+              Workspace
+            </div>
+            <nav className="space-y-1">
+              {[
+                { id: "analytics", label: "Analytics", icon: BarChart2 },
+                { id: "data_sources", label: "Data Sources", icon: Database },
+                { id: "integrations", label: "Integrations", icon: Sparkles },
+                { id: "settings", label: "Settings", icon: SettingsIcon },
+              ].map((item) => {
+                const IconComp = item.icon;
+                const isActive = activeTab === item.id;
+                return (
                   <button
-                    className="pinTextBtn"
-                    onClick={() => void sendQuestion(pin.question)}
+                    key={item.id}
+                    onClick={() => setActiveTab(item.id as ActiveTab)}
+                    className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium transition-all ${
+                      isActive
+                        ? "border border-cyan-500/30 bg-gradient-to-r from-cyan-950/50 to-blue-950/30 text-cyan-300 shadow-sm"
+                        : "text-slate-400 hover:bg-slate-900/60 hover:text-slate-200"
+                    }`}
                   >
-                    {pin.question}
+                    <IconComp
+                      size={15}
+                      className={isActive ? "text-cyan-400" : "text-slate-400"}
+                    />
+                    <span>{item.label}</span>
                   </button>
-                  <button
-                    className="pinActionBtn"
-                    title="Unpin"
-                    onClick={() => togglePin(pin.question)}
-                  >
-                    <Icon name="pin" />
-                  </button>
-                </div>
-              ))
-            )}
+                );
+              })}
+            </nav>
           </div>
 
-          {/* SUGGESTED Section */}
-          <div className="sidebarNavSection">
-            <div className="sectionLabel">SUGGESTED</div>
-            {["Show revenue by country", "Show profit by country"].map((text) => (
-              <div className="pinItemRow" key={text}>
-                <button
-                  className="pinTextBtn"
-                  onClick={() => void sendQuestion(text)}
-                >
-                  <Icon name="chart" />
-                  <span>{text}</span>
-                </button>
-                <button
-                  className="pinActionBtn"
-                  title="Pin question"
-                  onClick={() => togglePin(text)}
-                >
-                  <Icon name="pin" />
-                </button>
-              </div>
-            ))}
-          </div>
-
-          {/* RECENT CHATS Section */}
-          <div className="sidebarNavSection">
-            <div className="sectionLabel">RECENT CHATS</div>
-            {messages.filter((m) => m.role === "user").length === 0 ? (
-              <p className="emptyHint">No recent chats</p>
+          {/* Pinned Section */}
+          <div className="mt-6">
+            <div className="px-2 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+              Pinned
+            </div>
+            {pinnedQuestions.length === 0 ? (
+              <p className="mt-1 px-2 text-[11px] text-slate-500">
+                Pin important questions to keep them here.
+              </p>
             ) : (
-              <div className="recentChatsList">
-                {messages
-                  .filter((m) => m.role === "user")
-                  .slice(-4)
-                  .reverse()
-                  .map((m) => (
+              <div className="mt-1 space-y-1">
+                {pinnedQuestions.map((q) => (
+                  <div
+                    key={q}
+                    className="group flex items-center justify-between rounded-lg px-2.5 py-1.5 text-xs text-slate-300 hover:bg-slate-900/60"
+                  >
                     <button
-                      className="recentItemBtn"
-                      key={m.id}
-                      onClick={() => setPage("chat")}
+                      onClick={() => {
+                        setActiveTab("chat");
+                        handleSendQuestion(q);
+                      }}
+                      className="truncate text-left font-normal hover:text-cyan-300"
                     >
-                      {m.content}
+                      {q}
                     </button>
-                  ))}
-              </div>
-            )}
-          </div>
-
-          {/* Bottom Profile */}
-          <div className="profileSection">
-            <div className="profileAvatar">N</div>
-            <div className="profileDetails">
-              <strong>Naseema</strong>
-              <span>Analyst</span>
-            </div>
-            <span className="onlineStatusDot" title="Active" />
-          </div>
-        </aside>
-      )}
-
-      {/* MAIN CONTENT AREA */}
-      <section className="mainContent">
-        {/* TOPBAR - Clean, dark navy, hamburger on left, Connected badge & avatar on right */}
-        <header className="topbar">
-          <button
-            className="menuToggleBtn"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            aria-label="Toggle navigation sidebar"
-          >
-            <Icon name="menu" />
-          </button>
-
-          <div className="topbarRight">
-            <div className="connectedBadge">
-              <span className="onlineDot" />
-              <span>Connected</span>
-            </div>
-            <div className="topAvatar">N</div>
-          </div>
-        </header>
-
-        {/* PAGE CONTENT */}
-        {page === "chat" ? (
-          <div className="chatWorkspace">
-            {messages.length === 0 ? (
-              /* DEFAULT HOME DASHBOARD - Exact match to reference screenshot */
-              <div className="heroWelcome">
-                {/* 1. Animated Dashboard Illustration */}
-                <div className="heroAnimationWrapper">
-                  <MetricMindAnimation />
-                </div>
-
-                {/* 2. Main Heading and Subtitle */}
-                <h1 className="heroTitle">Ask MetricMind anything</h1>
-                <p className="heroSubtitle">
-                  Turn your business data into clear answers and insights.
-                </p>
-
-                {/* 3. Wide Rounded Chat Input */}
-                <form
-                  className="heroComposer"
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    void sendQuestion();
-                  }}
-                >
-                  <span className="composerSparkIcon">
-                    <Icon name="spark" />
-                  </span>
-
-                  <textarea
-                    ref={textareaRef}
-                    rows={1}
-                    className="composerInput"
-                    placeholder="Ask a question about your business data..."
-                    value={question}
-                    onChange={(e) => setQuestion(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && !e.shiftKey) {
-                        e.preventDefault();
-                        void sendQuestion();
-                      }
-                    }}
-                  />
-
-                  <div className="composerGrip">
-                    <Icon name="grip" />
-                  </div>
-
-                  <button
-                    className="composerSendBtn"
-                    type="submit"
-                    disabled={!question.trim() || loading}
-                    aria-label="Send question"
-                  >
-                    <Icon name="send" />
-                  </button>
-                </form>
-
-                {/* 4. Subtext below input */}
-                <div className="composerHelperText">
-                  Press Enter to send · Shift + Enter for a new line
-                </div>
-              </div>
-            ) : (
-              /* CHAT MESSAGES VIEW */
-              <div className="messagesWorkspace">
-                <div className="messagesList">
-                  {messages.map((message) => (
-                    <article
-                      className={`messageCard ${
-                        message.role === "user" ? "userCard" : "assistantCard"
-                      }`}
-                      key={message.id}
+                    <button
+                      onClick={() => togglePin(q)}
+                      className="opacity-0 group-hover:opacity-100 text-cyan-400 hover:text-cyan-200"
                     >
-                      {message.role === "assistant" && (
-                        <div className="assistantBrandBadge">M</div>
-                      )}
-                      <div className="messageBody">
-                        <div className="messageRoleTag">
-                          {message.role === "user" ? "YOU" : "METRICMIND"}
-                        </div>
-                        <div className="messageText">{message.content}</div>
-
-                        {message.data && message.data.length > 0 && (
-                          <div className="tableWrapper">
-                            <table className="dataTable">
-                              <thead>
-                                <tr>
-                                  {Object.keys(message.data[0]).map((key) => (
-                                    <th key={key}>{key}</th>
-                                  ))}
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {message.data.map((row, index) => (
-                                  <tr key={index}>
-                                    {Object.keys(message.data![0]).map((key) => (
-                                      <td key={key}>
-                                        {displayValue(row[key])}
-                                      </td>
-                                    ))}
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </table>
-                          </div>
-                        )}
-
-                        {message.role === "assistant" && (
-                          <div className="messageActions">
-                            <button
-                              className="actionBtn"
-                              onClick={() => {
-                                setSelectedMessage(message);
-                                setModal("api");
-                              }}
-                            >
-                              <Icon name="code" />
-                              <span>View API Call</span>
-                            </button>
-                            <button
-                              className="actionBtn"
-                              onClick={() => {
-                                setSelectedMessage(message);
-                                setModal("sql");
-                              }}
-                            >
-                              <Icon name="code" />
-                              <span>View SQL</span>
-                            </button>
-                            <button
-                              className="actionBtn"
-                              onClick={() =>
-                                togglePin(
-                                  messages[messages.indexOf(message) - 1]
-                                    ?.content || message.content
-                                )
-                              }
-                            >
-                              <Icon name="pin" />
-                              <span>Pin / Unpin</span>
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    </article>
-                  ))}
-
-                  {loading && (
-                    <article className="messageCard assistantCard loadingCard">
-                      <div className="assistantBrandBadge">M</div>
-                      <div className="messageBody">
-                        <div className="messageRoleTag">METRICMIND</div>
-                        <div className="loadingIndicator">
-                          <span className="loadingSpinner" />
-                          <div>
-                            <strong>Analyzing your business question...</strong>
-                            <p>Querying the Semantic Layer and preparing results</p>
-                          </div>
-                        </div>
-                        <div className="loadingStreamBars">
-                          <span />
-                          <span />
-                          <span />
-                          <span />
-                          <span />
-                        </div>
-                      </div>
-                    </article>
-                  )}
-                </div>
-
-                {/* Bottom Composer for chat continuation */}
-                <form
-                  className="heroComposer bottomComposer"
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    void sendQuestion();
-                  }}
-                >
-                  <span className="composerSparkIcon">
-                    <Icon name="spark" />
-                  </span>
-
-                  <textarea
-                    rows={1}
-                    className="composerInput"
-                    placeholder="Ask another question about your business data..."
-                    value={question}
-                    onChange={(e) => setQuestion(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && !e.shiftKey) {
-                        e.preventDefault();
-                        void sendQuestion();
-                      }
-                    }}
-                  />
-
-                  <button
-                    className="composerSendBtn"
-                    type="submit"
-                    disabled={!question.trim() || loading}
-                    aria-label="Send question"
-                  >
-                    <Icon name="send" />
-                  </button>
-                </form>
+                      <Pin size={12} className="fill-cyan-400" />
+                    </button>
+                  </div>
+                ))}
               </div>
             )}
           </div>
-        ) : (
-          /* WORKSPACE SUBPAGES (Analytics, Data Sources, Integrations, Settings) */
-          <div className="workspaceSubpage">
-            <span className="eyebrowLabel">METRICMIND WORKSPACE</span>
-            <h1 className="subpageTitle">
-              {page === "analytics"
-                ? "Analytics Overview"
-                : page === "sources"
-                ? "Data Sources"
-                : page === "integrations"
-                ? "Integrations"
-                : "Settings"}
-            </h1>
-            <p className="subpageDescription">
-              {page === "analytics" &&
-                "Explore real-time business performance and ask questions about your data."}
-              {page === "sources" &&
-                "Review connected relational databases and Semantic BI catalogs."}
-              {page === "integrations" &&
-                "AI Agent upstream API proxy and Cloudflare tunnel status."}
-              {page === "settings" &&
-                "Workspace preferences, model parameters, and profile configuration."}
-            </p>
 
-            {page === "analytics" ? (
-              <div className="workspaceCardsGrid">
-                {[
-                  ["Sales Analysis", "Show sales by country", "Explore sales across regional markets."],
-                  ["Revenue Analysis", "Show revenue by country", "Analyze revenue trends and recurring sales."],
-                  ["Profit Analysis", "Show profit by country", "Inspect profit margins and unit economics."],
-                ].map(([title, query, desc]) => (
-                  <button
-                    className="workspaceActionCard"
-                    key={title}
-                    onClick={() => {
-                      setPage("chat");
-                      void sendQuestion(query);
-                    }}
+          {/* Suggested Section */}
+          <div className="mt-6">
+            <div className="px-2 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+              Suggested
+            </div>
+            <div className="mt-1.5 space-y-1">
+              {[
+                "Show revenue by country",
+                "Show profit by country",
+                "Show monthly revenue trends",
+                "Which product has the highest sales?",
+                "What is the profit margin?",
+              ].map((q) => {
+                const isPinned = pinnedQuestions.includes(q);
+                return (
+                  <div
+                    key={q}
+                    className="group flex items-center justify-between rounded-lg px-2.5 py-1.5 text-xs text-slate-300 hover:bg-slate-900/60 transition-colors"
                   >
-                    <div className="workspaceCardIcon">
-                      <Icon name="chart" />
-                    </div>
-                    <h3>{title}</h3>
-                    <p>{desc}</p>
-                    <span className="cardActionLink">Explore analysis →</span>
+                    <button
+                      onClick={() => {
+                        setActiveTab("chat");
+                        handleSendQuestion(q);
+                      }}
+                      className="flex items-center gap-2 truncate text-left hover:text-cyan-300"
+                    >
+                      <BarChart2 size={13} className="text-slate-500 group-hover:text-cyan-400 shrink-0" />
+                      <span className="truncate">{q}</span>
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        togglePin(q);
+                      }}
+                      className="text-slate-500 hover:text-cyan-400 ml-1.5 shrink-0"
+                    >
+                      <Pin size={12} className={isPinned ? "fill-cyan-400 text-cyan-400" : ""} />
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Recent Chats Section */}
+          <div className="mt-6">
+            <div className="px-2 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+              Recent Chats
+            </div>
+            {recentChats.length === 0 ? (
+              <p className="mt-1 px-2 text-[11px] text-slate-500">No recent chats</p>
+            ) : (
+              <div className="mt-1 space-y-1">
+                {recentChats.map((c, i) => (
+                  <button
+                    key={i}
+                    onClick={() => {
+                      setActiveTab("chat");
+                      handleSendQuestion(c);
+                    }}
+                    className="w-full truncate rounded-lg px-2.5 py-1 text-left text-xs text-slate-400 hover:bg-slate-900/60 hover:text-slate-200"
+                  >
+                    {c}
                   </button>
                 ))}
               </div>
-            ) : (
-              <div className="infoStatusCard">
-                <div className="workspaceCardIcon">
-                  <Icon
-                    name={
-                      page === "sources"
-                        ? "database"
-                        : page === "settings"
-                        ? "settings"
-                        : "spark"
-                    }
-                  />
-                </div>
-                <h3>
-                  {page === "sources"
-                    ? "Data Source Connection Active"
-                    : page === "integrations"
-                    ? "Semantic AI API Configured"
-                    : "User Profile: Naseema (Analyst)"}
-                </h3>
-                <p>
-                  {page === "sources"
-                    ? "Semantic Layer connection points to PostgreSQL/DuckDB business models."
-                    : page === "integrations"
-                    ? "Queries are processed via /api/chat upstream model endpoint."
-                    : "Workspace configured for semantic exploration and interactive dashboarding."}
-                </p>
-                <button
-                  className="returnToChatBtn"
-                  onClick={() => setPage("chat")}
-                >
-                  Return to Dashboard
-                </button>
-              </div>
             )}
           </div>
-        )}
-      </section>
+        </div>
 
-      {/* DETAIL MODAL (API Call / SQL) */}
-      {modal && selectedMessage && (
-        <div className="modalBackdrop" onClick={() => setModal(null)}>
-          <div className="modalCard" onClick={(e) => e.stopPropagation()}>
-            <div className="modalHeader">
-              <h3>{modal === "api" ? "API Call Details" : "Generated SQL"}</h3>
-              <button
-                className="modalCloseBtn"
-                onClick={() => setModal(null)}
-                aria-label="Close modal"
-              >
-                <Icon name="close" />
-              </button>
+        {/* User Profile at Bottom */}
+        <div className="border-t border-slate-800/80 p-3">
+          <div className="flex items-center justify-between rounded-xl p-2 hover:bg-slate-900/50">
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-tr from-violet-600 to-indigo-600 text-xs font-bold text-white shadow-md">
+                N
+              </div>
+              <div>
+                <div className="text-xs font-semibold text-white">Naseema</div>
+                <div className="text-[10px] text-slate-400">Analyst</div>
+              </div>
             </div>
-            <pre className="modalCodeBlock">
-              {modal === "sql"
-                ? selectedMessage.sql ||
-                  "The backend did not return a generated SQL query for this response."
-                : JSON.stringify(
-                    {
-                      method: "POST",
-                      endpoint: "/api/chat",
-                      response:
-                        selectedMessage.apiResponse ?? {
-                          message: selectedMessage.content,
-                        },
-                    },
-                    null,
-                    2
-                  )}
-            </pre>
-            <div className="modalFooter">
-              <button
-                className="copyBtn"
-                onClick={() => {
-                  const val =
-                    modal === "sql"
-                      ? selectedMessage.sql || "No SQL returned."
-                      : JSON.stringify(selectedMessage.apiResponse ?? {}, null, 2);
-                  void navigator.clipboard?.writeText(val);
-                }}
-              >
-                Copy to Clipboard
-              </button>
-            </div>
+            <span className="flex h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_6px_#10b981]" />
           </div>
         </div>
-      )}
-
-      {/* STYLES - Exact replication of reference screenshot layout & theme */}
-      <style jsx>{`
-        .metricApp {
-          display: flex;
-          width: 100vw;
-          height: 100vh;
-          overflow: hidden;
-          background-color: #060b18;
-          color: #f8fafc;
-        }
-
-        /* SIDEBAR */
-        .sidebar {
-          width: 250px;
-          min-width: 250px;
-          height: 100%;
-          display: flex;
-          flex-direction: column;
-          padding: 20px 16px 16px;
-          background-color: #080d1a;
-          border-right: 1px solid rgba(25, 42, 75, 0.45);
-          overflow-y: auto;
-          flex-shrink: 0;
-          z-index: 20;
-        }
-
-        /* Top Brand */
-        .brand {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          padding-bottom: 18px;
-          border-bottom: 1px solid rgba(30, 48, 85, 0.45);
-        }
-
-        .brandIcon {
-          display: grid;
-          place-items: center;
-          width: 38px;
-          height: 38px;
-          border-radius: 11px;
-          background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
-          color: #ffffff;
-          font-weight: 800;
-          font-size: 19px;
-          box-shadow: 0 4px 12px rgba(139, 92, 246, 0.35);
-          flex-shrink: 0;
-        }
-
-        .brandText strong {
-          display: block;
-          color: #ffffff;
-          font-size: 15.5px;
-          font-weight: 700;
-          letter-spacing: -0.2px;
-        }
-
-        .brandText span {
-          display: block;
-          margin-top: 3px;
-          color: #64748b;
-          font-size: 9.5px;
-          font-weight: 600;
-          letter-spacing: 1.6px;
-        }
-
-        /* New Chat Button */
-        .newChatBtn {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 9px;
-          width: 100%;
-          height: 42px;
-          margin: 18px 0 20px;
-          border-radius: 11px;
-          background: linear-gradient(90deg, #9333ea 0%, #3b82f6 100%);
-          color: #ffffff;
-          font-size: 13.5px;
-          font-weight: 600;
-          box-shadow: 0 4px 14px rgba(147, 51, 234, 0.35);
-          transition: transform 0.15s ease, filter 0.15s ease;
-        }
-
-        .newChatBtn:hover {
-          filter: brightness(1.08);
-          transform: translateY(-1px);
-        }
-
-        .newChatBtn:active {
-          transform: translateY(0);
-        }
-
-        /* Nav Section */
-        .sidebarNavSection {
-          margin-bottom: 22px;
-        }
-
-        .sectionLabel {
-          color: #55698a;
-          font-size: 10px;
-          font-weight: 700;
-          letter-spacing: 1.4px;
-          margin: 0 6px 10px;
-        }
-
-        .navItem {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          width: 100%;
-          padding: 9px 10px;
-          border-radius: 8px;
-          color: #94a3b8;
-          font-size: 13px;
-          font-weight: 500;
-          text-align: left;
-          transition: color 0.15s ease, background-color 0.15s ease;
-        }
-
-        .navItem:hover {
-          color: #ffffff;
-          background-color: rgba(30, 50, 90, 0.35);
-        }
-
-        .navActive {
-          color: #ffffff;
-          background-color: rgba(30, 50, 90, 0.5);
-        }
-
-        .emptyHint {
-          margin: 0 6px;
-          color: #55698a;
-          font-size: 11.5px;
-          line-height: 1.5;
-        }
-
-        .pinItemRow {
-          display: flex;
-          align-items: center;
-          gap: 4px;
-          margin-bottom: 3px;
-        }
-
-        .pinTextBtn {
-          flex: 1;
-          display: flex;
-          align-items: center;
-          gap: 9px;
-          padding: 8px 8px;
-          border-radius: 7px;
-          color: #94a3b8;
-          font-size: 12px;
-          text-align: left;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          transition: color 0.15s ease, background 0.15s ease;
-        }
-
-        .pinTextBtn:hover {
-          color: #ffffff;
-          background: rgba(30, 50, 90, 0.3);
-        }
-
-        .pinActionBtn {
-          display: grid;
-          place-items: center;
-          padding: 7px;
-          border-radius: 6px;
-          color: #55698a;
-          transition: color 0.15s ease;
-        }
-
-        .pinActionBtn:hover {
-          color: #00f2fe;
-        }
-
-        .recentChatsList {
-          display: flex;
-          flex-direction: column;
-          gap: 2px;
-        }
-
-        .recentItemBtn {
-          padding: 7px 8px;
-          border-radius: 7px;
-          color: #94a3b8;
-          font-size: 12px;
-          text-align: left;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          transition: color 0.15s ease;
-        }
-
-        .recentItemBtn:hover {
-          color: #ffffff;
-          background: rgba(30, 50, 90, 0.25);
-        }
-
-        /* Bottom Profile */
-        .profileSection {
-          display: flex;
-          align-items: center;
-          gap: 11px;
-          margin-top: auto;
-          padding-top: 14px;
-          border-top: 1px solid rgba(30, 48, 85, 0.45);
-        }
-
-        .profileAvatar {
-          display: grid;
-          place-items: center;
-          width: 35px;
-          height: 35px;
-          border-radius: 50%;
-          background: linear-gradient(135deg, #1e293b, #0f172a);
-          border: 1px solid rgba(148, 163, 184, 0.2);
-          color: #ffffff;
-          font-weight: 600;
-          font-size: 14px;
-        }
-
-        .profileDetails strong {
-          display: block;
-          color: #ffffff;
-          font-size: 13px;
-          font-weight: 600;
-          line-height: 1.2;
-        }
-
-        .profileDetails span {
-          display: block;
-          margin-top: 2px;
-          color: #64748b;
-          font-size: 11px;
-        }
-
-        .onlineStatusDot {
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          background-color: #00f2fe;
-          box-shadow: 0 0 8px #00f2fe;
-          margin-left: auto;
-        }
-
-        /* MAIN PANEL */
-        .mainContent {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          min-width: 0;
-          height: 100%;
-          background-color: #060b18;
-          position: relative;
-        }
-
-        /* TOPBAR */
-        .topbar {
-          height: 72px;
-          min-height: 72px;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 0 28px;
-          border-bottom: 1px solid rgba(25, 42, 75, 0.45);
-          background-color: #080d1a;
-          z-index: 10;
-        }
-
-        .menuToggleBtn {
-          display: grid;
-          place-items: center;
-          width: 36px;
-          height: 36px;
-          border-radius: 8px;
-          color: #8fa3c7;
-          transition: color 0.15s ease, background 0.15s ease;
-        }
-
-        .menuToggleBtn:hover {
-          color: #ffffff;
-          background: rgba(255, 255, 255, 0.05);
-        }
-
-        .topbarRight {
-          display: flex;
-          align-items: center;
-          gap: 16px;
-        }
-
-        .connectedBadge {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          padding: 6px 14px;
-          border-radius: 20px;
-          background: rgba(0, 242, 254, 0.04);
-          border: 1px solid rgba(0, 242, 254, 0.5);
-          color: #00f2fe;
-          font-size: 12px;
-          font-weight: 500;
-        }
-
-        .onlineDot {
-          width: 7px;
-          height: 7px;
-          border-radius: 50%;
-          background: #00f2fe;
-          box-shadow: 0 0 7px #00f2fe;
-        }
-
-        .topAvatar {
-          display: grid;
-          place-items: center;
-          width: 34px;
-          height: 34px;
-          border-radius: 50%;
-          background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
-          color: #ffffff;
-          font-weight: 600;
-          font-size: 14px;
-          box-shadow: 0 2px 8px rgba(139, 92, 246, 0.35);
-        }
-
-        /* CHAT WORKSPACE */
-        .chatWorkspace {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          min-height: 0;
-          overflow: hidden;
-          position: relative;
-        }
-
-        /* HERO WELCOME SCREEN (Screenshot Replica) */
-        .heroWelcome {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          padding: 24px 32px 36px;
-          overflow-y: auto;
-        }
-
-        .heroAnimationWrapper {
-          width: 100%;
-          max-width: 780px;
-          margin-bottom: 24px;
-        }
-
-        .heroTitle {
-          margin: 0;
-          color: #f8fafc;
-          font-size: clamp(26px, 2.5vw, 34px);
-          font-weight: 700;
-          letter-spacing: -0.6px;
-          text-align: center;
-        }
-
-        .heroSubtitle {
-          margin: 10px 0 28px;
-          color: #8fa3c7;
-          font-size: 15px;
-          font-weight: 400;
-          text-align: center;
-        }
-
-        /* COMPOSER (Screenshot Replica) */
-        .heroComposer {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          width: min(780px, 92%);
-          min-height: 62px;
-          padding: 8px 10px 8px 18px;
-          border-radius: 18px;
-          background: #0b1324;
-          border: 1px solid rgba(48, 74, 115, 0.45);
-          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.04);
-          transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .heroComposer:focus-within {
-          border-color: rgba(0, 242, 254, 0.4);
-          box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5), 0 0 16px rgba(0, 242, 254, 0.15);
-        }
-
-        .composerSparkIcon {
-          color: #818cf8;
-          display: grid;
-          place-items: center;
-          flex-shrink: 0;
-        }
-
-        .composerInput {
-          flex: 1;
-          min-width: 0;
-          max-height: 120px;
-          resize: none;
-          padding: 8px 0;
-          border: 0;
-          outline: 0;
-          background: transparent;
-          color: #f8fafc;
-          font-size: 14px;
-        }
-
-        .composerInput::placeholder {
-          color: #55698a;
-        }
-
-        .composerGrip {
-          display: grid;
-          place-items: center;
-          color: #3e5070;
-          margin-right: 4px;
-        }
-
-        .composerSendBtn {
-          display: grid;
-          place-items: center;
-          width: 44px;
-          height: 44px;
-          border-radius: 12px;
-          background: linear-gradient(135deg, #a855f7 0%, #3b82f6 100%);
-          color: #ffffff;
-          box-shadow: 0 4px 15px rgba(168, 85, 247, 0.35);
-          flex-shrink: 0;
-          transition: transform 0.15s ease, filter 0.15s ease;
-        }
-
-        .composerSendBtn:hover:not(:disabled) {
-          filter: brightness(1.1);
-          transform: translateY(-1px);
-        }
-
-        .composerSendBtn:disabled {
-          opacity: 0.4;
-          cursor: not-allowed;
-          box-shadow: none;
-        }
-
-        .composerHelperText {
-          margin-top: 12px;
-          color: #55698a;
-          font-size: 11.5px;
-          text-align: center;
-        }
-
-        /* MESSAGES WORKSPACE */
-        .messagesWorkspace {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          min-height: 0;
-          overflow: hidden;
-        }
-
-        .messagesList {
-          flex: 1;
-          overflow-y: auto;
-          padding: 24px clamp(16px, 5vw, 80px) 16px;
-        }
-
-        .messageCard {
-          display: flex;
-          gap: 14px;
-          width: min(100%, 820px);
-          margin: 0 auto 18px;
-          padding: 18px 20px;
-          border-radius: 16px;
-          background: #091224;
-          border: 1px solid rgba(35, 58, 98, 0.5);
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-        }
-
-        .userCard {
-          width: fit-content;
-          max-width: 80%;
-          margin-right: max(0px, calc((100% - 820px) / 2));
-          margin-left: auto;
-          background: rgba(30, 58, 110, 0.3);
-          border-color: rgba(59, 130, 246, 0.35);
-        }
-
-        .assistantBrandBadge {
-          display: grid;
-          place-items: center;
-          width: 32px;
-          height: 32px;
-          border-radius: 10px;
-          background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
-          color: #ffffff;
-          font-weight: 700;
-          font-size: 15px;
-          flex-shrink: 0;
-        }
-
-        .messageBody {
-          flex: 1;
-          min-width: 0;
-        }
-
-        .messageRoleTag {
-          font-size: 10px;
-          font-weight: 700;
-          letter-spacing: 1.2px;
-          color: #818cf8;
-          margin-bottom: 6px;
-        }
-
-        .messageText {
-          color: #e2e8f0;
-          font-size: 14px;
-          line-height: 1.65;
-          overflow-wrap: anywhere;
-        }
-
-        .tableWrapper {
-          margin-top: 14px;
-          overflow-x: auto;
-          border-radius: 10px;
-          border: 1px solid rgba(40, 70, 115, 0.5);
-        }
-
-        .dataTable {
-          width: 100%;
-          border-collapse: collapse;
-          font-size: 12.5px;
-          text-align: left;
-        }
-
-        .dataTable th,
-        .dataTable td {
-          padding: 10px 14px;
-          border-bottom: 1px solid rgba(35, 58, 95, 0.4);
-          white-space: nowrap;
-        }
-
-        .dataTable th {
-          background: #0f1c34;
-          color: #7dd3fc;
-          font-weight: 600;
-        }
-
-        .dataTable td {
-          color: #cbd5e1;
-        }
-
-        .messageActions {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 8px;
-          margin-top: 14px;
-          padding-top: 12px;
-          border-top: 1px solid rgba(35, 58, 95, 0.35);
-        }
-
-        .actionBtn {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          padding: 6px 11px;
-          border-radius: 8px;
-          background: rgba(30, 50, 85, 0.35);
-          border: 1px solid rgba(50, 80, 130, 0.4);
-          color: #94a3b8;
-          font-size: 11.5px;
-          transition: color 0.15s ease, background 0.15s ease;
-        }
-
-        .actionBtn:hover {
-          color: #ffffff;
-          background: rgba(45, 75, 125, 0.5);
-        }
-
-        .bottomComposer {
-          margin: 0 auto 20px;
-          flex-shrink: 0;
-        }
-
-        .loadingCard {
-          border-color: rgba(56, 189, 248, 0.35);
-        }
-
-        .loadingIndicator {
-          display: flex;
-          align-items: center;
-          gap: 14px;
-          color: #7dd3fc;
-        }
-
-        .loadingIndicator strong {
-          font-size: 13.5px;
-          color: #ffffff;
-        }
-
-        .loadingIndicator p {
-          margin: 3px 0 0;
-          font-size: 12px;
-          color: #8fa3c7;
-        }
-
-        .loadingSpinner {
-          width: 26px;
-          height: 26px;
-          border: 2px solid rgba(56, 189, 248, 0.2);
-          border-top-color: #00f2fe;
-          border-right-color: #a855f7;
-          border-radius: 50%;
-          animation: spin 0.9s linear infinite;
-          flex-shrink: 0;
-        }
-
-        .loadingStreamBars {
-          display: flex;
-          gap: 6px;
-          height: 3px;
-          margin-top: 14px;
-          background: rgba(30, 50, 85, 0.3);
-          border-radius: 2px;
-          overflow: hidden;
-        }
-
-        .loadingStreamBars span {
-          width: 20%;
-          background: linear-gradient(90deg, #00f2fe, #a855f7);
-          animation: barFlow 1.2s ease-in-out infinite alternate;
-        }
-
-        /* WORKSPACE SUBPAGES */
-        .workspaceSubpage {
-          flex: 1;
-          overflow-y: auto;
-          padding: clamp(24px, 4vw, 56px);
-        }
-
-        .eyebrowLabel {
-          color: #818cf8;
-          font-size: 10px;
-          font-weight: 700;
-          letter-spacing: 1.5px;
-        }
-
-        .subpageTitle {
-          margin: 6px 0 10px;
-          font-size: 28px;
-          color: #ffffff;
-          font-weight: 700;
-        }
-
-        .subpageDescription {
-          color: #8fa3c7;
-          font-size: 14px;
-          margin: 0 0 28px;
-        }
-
-        .workspaceCardsGrid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-          gap: 18px;
-        }
-
-        .workspaceActionCard,
-        .infoStatusCard {
-          padding: 22px;
-          border-radius: 16px;
-          background: #091224;
-          border: 1px solid rgba(35, 58, 98, 0.5);
-          text-align: left;
-          color: #f8fafc;
-          transition: transform 0.15s ease, border-color 0.15s ease;
-        }
-
-        .workspaceActionCard:hover {
-          transform: translateY(-2px);
-          border-color: rgba(0, 242, 254, 0.4);
-        }
-
-        .workspaceCardIcon {
-          width: 38px;
-          height: 38px;
-          border-radius: 10px;
-          background: rgba(0, 242, 254, 0.1);
-          color: #00f2fe;
-          display: grid;
-          place-items: center;
-          margin-bottom: 14px;
-        }
-
-        .workspaceActionCard h3,
-        .infoStatusCard h3 {
-          margin: 0 0 8px;
-          font-size: 16px;
-          font-weight: 600;
-        }
-
-        .workspaceActionCard p,
-        .infoStatusCard p {
-          color: #8fa3c7;
-          font-size: 13px;
-          line-height: 1.6;
-          margin: 0 0 14px;
-        }
-
-        .cardActionLink {
-          color: #38bdf8;
-          font-size: 12.5px;
-          font-weight: 600;
-        }
-
-        .returnToChatBtn {
-          padding: 9px 16px;
-          border-radius: 8px;
-          background: linear-gradient(90deg, #9333ea, #3b82f6);
-          color: #ffffff;
-          font-size: 13px;
-          font-weight: 600;
-        }
-
-        /* MODAL */
-        .modalBackdrop {
-          position: fixed;
-          inset: 0;
-          z-index: 50;
-          background: rgba(0, 0, 0, 0.65);
-          backdrop-filter: blur(6px);
-          display: grid;
-          place-items: center;
-          padding: 20px;
-        }
-
-        .modalCard {
-          width: min(650px, 100%);
-          max-height: 85vh;
-          border-radius: 18px;
-          background: #091326;
-          border: 1px solid rgba(45, 75, 125, 0.5);
-          padding: 22px;
-          display: flex;
-          flex-direction: column;
-          box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
-        }
-
-        .modalHeader {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          margin-bottom: 14px;
-        }
-
-        .modalHeader h3 {
-          margin: 0;
-          color: #ffffff;
-          font-size: 16px;
-        }
-
-        .modalCloseBtn {
-          color: #8fa3c7;
-          display: grid;
-          place-items: center;
-        }
-
-        .modalCloseBtn:hover {
-          color: #ffffff;
-        }
-
-        .modalCodeBlock {
-          flex: 1;
-          overflow-y: auto;
-          background: #050a14;
-          border: 1px solid rgba(30, 48, 80, 0.5);
-          border-radius: 10px;
-          padding: 14px;
-          color: #7dd3fc;
-          font-family: monospace;
-          font-size: 12px;
-          white-space: pre-wrap;
-          word-break: break-all;
-        }
-
-        .modalFooter {
-          margin-top: 16px;
-          display: flex;
-          justify-content: flex-end;
-        }
-
-        .copyBtn {
-          padding: 8px 14px;
-          border-radius: 8px;
-          background: rgba(30, 50, 90, 0.4);
-          border: 1px solid rgba(56, 189, 248, 0.3);
-          color: #00f2fe;
-          font-size: 12px;
-          font-weight: 500;
-        }
-
-        .copyBtn:hover {
-          background: rgba(30, 50, 90, 0.6);
-        }
-
-        /* ANIMATIONS */
-        @keyframes spin {
-          to {
-            transform: rotate(360deg);
-          }
-        }
-
-        @keyframes barFlow {
-          from {
-            opacity: 0.3;
-            transform: scaleX(0.4);
-          }
-          to {
-            opacity: 1;
-            transform: scaleX(1);
-          }
-        }
-
-        /* RESPONSIVE */
-        @media (max-width: 900px) {
-          .sidebar {
-            width: 220px;
-            min-width: 220px;
-          }
-        }
-
-        @media (max-width: 680px) {
-          .sidebar {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            width: 240px;
-            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.5);
-          }
-
-          .heroComposer {
-            width: 95%;
-          }
-        }
-      `}</style>
-    </main>
+      </aside>
+
+      {/* 2. MAIN WORKSPACE */}
+      <div className="flex flex-1 flex-col overflow-hidden">
+        {/* Top Bar */}
+        <header className="flex h-14 items-center justify-between border-b border-slate-800/80 bg-[#060d1b] px-6">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-800 hover:text-white"
+            >
+              <Menu size={18} />
+            </button>
+            <span className="text-xs font-medium text-slate-400">
+              {activeTab === "chat" && "Agentic Semantic Chat"}
+              {activeTab === "analytics" && "Executive BI Analytics"}
+              {activeTab === "data_sources" && "Dataset & Column Mappings"}
+              {activeTab === "integrations" && "Platform Connectors"}
+              {activeTab === "settings" && "Preferences & Motion"}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-3">
+            {/* Real Connection Status Pill */}
+            <div
+              className={`flex items-center gap-1.5 rounded-full border px-3 py-1 text-[11px] font-semibold ${
+                backendConnected
+                  ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.2)]"
+                  : "border-amber-500/30 bg-amber-500/10 text-amber-400"
+              }`}
+            >
+              <span
+                className={`h-2 w-2 rounded-full ${
+                  backendConnected
+                    ? "bg-emerald-400 shadow-[0_0_6px_#10b981]"
+                    : "bg-amber-400"
+                }`}
+              />
+              <span>{backendConnected ? "Connected" : "Reconnecting"}</span>
+            </div>
+
+            {/* Profile Avatar */}
+            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-violet-600 font-bold text-xs text-white">
+              N
+            </div>
+          </div>
+        </header>
+
+        {/* Content Workspace Area */}
+        <main className="flex-1 overflow-y-auto p-6 custom-scrollbar">
+          {activeTab === "analytics" && <AnalyticsView />}
+          {activeTab === "data_sources" && <DataSourcesView />}
+          {activeTab === "integrations" && <IntegrationsView />}
+          {activeTab === "settings" && <SettingsView />}
+
+          {activeTab === "chat" && (
+            <div className="mx-auto flex h-full max-w-4xl flex-col justify-between">
+              {/* WELCOME SCREEN (When no messages) */}
+              {messages.length === 0 ? (
+                <div className="my-auto flex flex-col items-center justify-center text-center animate-in fade-in duration-300">
+                  {/* CONTINUOUS ANIMATED ANALYTICS HERO (Bars, Waves, Hill Areas) */}
+                  <div className="mb-6 w-full">
+                    <AnimatedAnalyticsHero />
+                  </div>
+
+                  <h1 className="text-2xl font-bold tracking-tight text-white md:text-3xl">
+                    Ask MetricMind anything
+                  </h1>
+                  <p className="mt-1 text-sm text-slate-400">
+                    Turn your business data into clear answers and insights.
+                  </p>
+                </div>
+              ) : (
+                /* CHAT CONVERSATION THREAD */
+                <div className="space-y-6 pb-6">
+                  {messages.map((msg) => (
+                    <div
+                      key={msg.id}
+                      className={`flex flex-col ${
+                        msg.role === "user" ? "items-end" : "items-start"
+                      }`}
+                    >
+                      {msg.role === "user" ? (
+                        <div className="max-w-xl rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2.5 text-xs text-white shadow-lg shadow-blue-950/40">
+                          {msg.content}
+                        </div>
+                      ) : (
+                        <div className="w-full space-y-4 rounded-2xl border border-slate-800 bg-[#091326]/90 p-5 shadow-2xl backdrop-blur-md">
+                          {/* Assistant Header */}
+                          <div className="flex items-center justify-between border-b border-slate-800/80 pb-2.5">
+                            <div className="flex items-center gap-2">
+                              <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-gradient-to-tr from-cyan-400 to-blue-600 text-[10px] font-bold text-slate-950">
+                                MM
+                              </div>
+                              <span className="text-xs font-semibold text-cyan-300">
+                                MetricMind Analytical Response
+                              </span>
+                            </div>
+
+                            {/* View SQL and View API Call Buttons */}
+                            <div className="flex items-center gap-2">
+                              {msg.sql_trace && (
+                                <button
+                                  onClick={() => setActiveSqlTrace(msg.sql_trace || null)}
+                                  className="flex items-center gap-1 rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-2.5 py-1 text-[11px] font-semibold text-cyan-300 hover:bg-cyan-500/20"
+                                >
+                                  <Code2 size={13} />
+                                  <span>View SQL</span>
+                                </button>
+                              )}
+                              {msg.api_trace && (
+                                <button
+                                  onClick={() => {
+                                    setActiveApiTrace(msg.api_trace || null);
+                                    setActiveRawResponse(msg.data);
+                                  }}
+                                  className="flex items-center gap-1 rounded-lg border border-violet-500/30 bg-violet-500/10 px-2.5 py-1 text-[11px] font-semibold text-violet-300 hover:bg-violet-500/20"
+                                >
+                                  <Eye size={13} />
+                                  <span>View API Call</span>
+                                </button>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Natural Language Explanation */}
+                          <div className="text-xs leading-relaxed text-slate-200">
+                            {msg.content}
+                          </div>
+
+                          {/* KPI Badges */}
+                          {msg.kpi_items && msg.kpi_items.length > 0 && (
+                            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                              {msg.kpi_items.map((kpi, kIdx) => (
+                                <div
+                                  key={kIdx}
+                                  className="rounded-xl border border-slate-800 bg-slate-900/60 p-3 shadow-sm"
+                                >
+                                  <div className="text-[10px] uppercase tracking-wider text-slate-400">
+                                    {kpi.label}
+                                  </div>
+                                  <div className="mt-1 font-mono text-base font-bold text-white">
+                                    {kpi.formatted_value}
+                                  </div>
+                                  {kpi.description && (
+                                    <div className="mt-0.5 text-[10px] text-slate-500">
+                                      {kpi.description}
+                                    </div>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          )}
+
+                          {/* Analytical Chart (ECharts) */}
+                          {msg.chart_meta && msg.chart_meta.chart_type !== "kpi" && msg.data && msg.data.length > 0 && (
+                            <div className="rounded-xl border border-slate-800/80 bg-slate-950/60 p-4">
+                              <h4 className="mb-2 text-xs font-semibold text-cyan-300">
+                                {msg.chart_meta.title}
+                              </h4>
+                              <MetricMindEChart
+                                chartType={msg.chart_meta.chart_type}
+                                title={msg.chart_meta.title}
+                                data={msg.data}
+                                xKey={msg.chart_meta.x_key}
+                                yKeys={msg.chart_meta.y_keys}
+                                seriesNames={msg.chart_meta.series_names}
+                                height={260}
+                              />
+                            </div>
+                          )}
+
+                          {/* Secondary Root Cause Breakdown Table */}
+                          {msg.secondary_breakdown && (
+                            <div className="space-y-2 rounded-xl border border-violet-900/40 bg-violet-950/20 p-4">
+                              <div className="text-xs font-bold text-violet-300">
+                                {msg.secondary_breakdown.title}
+                              </div>
+                              <p className="text-[11px] text-slate-300">
+                                {msg.secondary_breakdown.explanation}
+                              </p>
+                              <div className="overflow-x-auto">
+                                <table className="w-full text-left font-mono text-[11px] text-slate-300">
+                                  <thead>
+                                    <tr className="border-b border-violet-900/60 text-violet-400">
+                                      <th className="py-1">Segment</th>
+                                      <th className="py-1">Revenue</th>
+                                      <th className="py-1">Profit</th>
+                                      <th className="py-1">Margin %</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody className="divide-y divide-violet-950/40">
+                                    {msg.secondary_breakdown.data.map((r, i) => (
+                                      <tr key={i}>
+                                        <td className="py-1">{String(Object.values(r)[0])}</td>
+                                        <td className="py-1">${Number(r.revenue || 0).toLocaleString()}</td>
+                                        <td className="py-1">${Number(r.profit || 0).toLocaleString()}</td>
+                                        <td className="py-1">{String(r.profit_margin ?? "")}%</td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Data Table */}
+                          {msg.data && msg.data.length > 1 && (
+                            <MetricMindDataTable
+                              data={msg.data}
+                              title="Detailed Analytical Records"
+                              pageSize={5}
+                            />
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+
+                  {loading && (
+                    <div className="flex items-center gap-3 rounded-2xl border border-slate-800 bg-[#081224] p-4 text-xs text-cyan-400">
+                      <Sparkles className="animate-spin text-cyan-400" size={16} />
+                      <span>Validating semantic plan and executing analytical query...</span>
+                    </div>
+                  )}
+
+                  <div ref={messagesEndRef} />
+                </div>
+              )}
+
+              {/* CHAT INPUT BAR AT BOTTOM */}
+              <div className="sticky bottom-0 pt-4">
+                <div className="relative flex items-center rounded-2xl border border-blue-900/50 bg-[#09152b]/95 p-2 shadow-2xl shadow-cyan-950/20 backdrop-blur-md">
+                  <div className="pl-3 pr-2 text-cyan-400">
+                    <Sparkles size={16} />
+                  </div>
+                  <textarea
+                    rows={1}
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    placeholder="Ask a question about your business data..."
+                    className="flex-1 resize-none bg-transparent py-2 text-xs text-white placeholder-slate-400 focus:outline-none"
+                  />
+                  <button
+                    onClick={() => handleSendQuestion()}
+                    disabled={!inputValue.trim() || loading}
+                    className="ml-2 flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-violet-600 to-blue-600 text-white shadow-md shadow-blue-900/40 transition-all hover:opacity-90 disabled:opacity-40"
+                  >
+                    <Send size={15} />
+                  </button>
+                </div>
+                <div className="mt-2 text-center text-[10px] text-slate-500">
+                  Press Enter to send · Shift + Enter for a new line
+                </div>
+              </div>
+            </div>
+          )}
+        </main>
+      </div>
+
+      {/* 3. MODALS */}
+      <ViewSqlModal
+        isOpen={Boolean(activeSqlTrace)}
+        onClose={() => setActiveSqlTrace(null)}
+        sqlTrace={activeSqlTrace}
+      />
+
+      <ViewApiCallModal
+        isOpen={Boolean(activeApiTrace)}
+        onClose={() => setActiveApiTrace(null)}
+        apiTrace={activeApiTrace}
+        rawResponse={activeRawResponse}
+      />
+    </div>
   );
 }

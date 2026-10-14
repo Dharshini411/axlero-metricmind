@@ -1,0 +1,414 @@
+.dashboardContainer {
+  position: relative;
+  width: 100%;
+  max-width: 820px;
+  height: 330px;
+  margin: 0 auto;
+  border-radius: 24px;
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  background: radial-gradient(ellipse at 50% 60%, #0d2347 0%, #08162e 50%, #040c1a 100%);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Subtle background grid */
+.gridBackground {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(56, 189, 248, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.08) 1px, transparent 1px);
+  background-size: 34px 34px;
+  mask-image: radial-gradient(ellipse at 50% 50%, black 50%, rgba(0, 0, 0, 0.2) 80%, transparent 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Central glowing radial aurora behind main hill peak */
+.radialGlow {
+  position: absolute;
+  top: 20%;
+  left: 55%;
+  width: 420px;
+  height: 260px;
+  transform: translate(-50%, -20%);
+  background: radial-gradient(ellipse, rgba(0, 242, 254, 0.18) 0%, rgba(139, 92, 246, 0.22) 45%, transparent 70%);
+  filter: blur(48px);
+  pointer-events: none;
+  z-index: 1;
+  animation: pulseGlow 5.5s ease-in-out infinite alternate;
+}
+
+/* Floating particles */
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.particleCyan {
+  width: 4.5px;
+  height: 4.5px;
+  background: #00f2fe;
+  box-shadow: 0 0 10px #00f2fe;
+  animation: particleFloat 6.5s ease-in-out infinite;
+}
+
+.particlePurple {
+  width: 4px;
+  height: 4px;
+  background: #c084fc;
+  box-shadow: 0 0 9px #c084fc;
+  animation: particleFloat 8s ease-in-out infinite reverse;
+}
+
+/* Floating Metric Cards Layer */
+.cardsLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: auto;
+}
+
+/* Glassmorphism Card Styling */
+.metricCard {
+  position: absolute;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(10, 36, 56, 0.88), rgba(5, 20, 34, 0.92));
+  border: 1px solid rgba(0, 242, 254, 0.3);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 13px 15px;
+  color: #f8fafc;
+  user-select: none;
+}
+
+/* CARD A: Total Revenue */
+.revenueCard {
+  top: 20px;
+  left: 24px;
+  width: 220px;
+  height: 128px;
+  display: flex;
+  flex-direction: column;
+}
+
+.cardTitle {
+  font-size: 11px;
+  font-weight: 500;
+  color: #93c5fd;
+  letter-spacing: 0.3px;
+  margin: 0;
+}
+
+.revenueValue {
+  font-size: 21px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.5px;
+  margin-top: 3px;
+}
+
+.growthText {
+  font-size: 11px;
+  font-weight: 600;
+  color: #10b981;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-top: 2px;
+}
+
+/* 7 Continuous Cyan Animated Bars */
+.barsContainer {
+  margin-top: auto;
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 44px;
+  padding-bottom: 2px;
+}
+
+.bar {
+  flex: 1;
+  display: block;
+  min-width: 6px;
+  max-width: 14px;
+  border-radius: 4px 4px 1px 1px;
+  background: linear-gradient(180deg, #00f2fe 0%, #2563eb 100%);
+  box-shadow: 0 0 8px rgba(0, 242, 254, 0.5);
+  transform-origin: bottom;
+  will-change: transform;
+}
+
+/* Staggered continuous bar keyframes */
+.bar1 { height: 18px; animation: barMove1 1.4s ease-in-out infinite alternate; }
+.bar2 { height: 28px; animation: barMove2 1.9s ease-in-out 0.15s infinite alternate; }
+.bar3 { height: 20px; animation: barMove3 1.3s ease-in-out 0.35s infinite alternate; }
+.bar4 { height: 34px; animation: barMove4 2.1s ease-in-out 0.05s infinite alternate; }
+.bar5 { height: 38px; animation: barMove5 1.7s ease-in-out 0.45s infinite alternate; }
+.bar6 { height: 26px; animation: barMove6 2.0s ease-in-out 0.25s infinite alternate; }
+.bar7 { height: 42px; animation: barMove7 1.5s ease-in-out 0.55s infinite alternate; }
+
+/* CARD B: Sales Trend */
+.trendCard {
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 228px;
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+}
+
+.trendHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.trendTitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: 0.2px;
+  margin: 0;
+}
+
+.trendBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  background: rgba(16, 185, 129, 0.18);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  color: #34d399;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.trendWaveContainer {
+  position: relative;
+  width: 100%;
+  height: 48px;
+  margin-top: 6px;
+  overflow: hidden;
+}
+
+.trendWaveSvg {
+  width: 200%;
+  height: 100%;
+  overflow: visible;
+  animation: trendScroll 4.5s linear infinite;
+}
+
+.trendWavePath {
+  fill: none;
+  stroke: #00f2fe;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 6px rgba(0, 242, 254, 0.75));
+  animation: trendUndulate 2.8s ease-in-out infinite alternate;
+}
+
+/* CARD C: Donut Indicator */
+.profitCard {
+  top: 20px;
+  right: 24px;
+  width: 220px;
+  height: 118px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+}
+
+.donutWrapper {
+  position: relative;
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: conic-gradient(
+    #00f2fe 0deg 175deg,
+    #3b82f6 175deg 260deg,
+    #a855f7 260deg 360deg
+  );
+  display: grid;
+  place-items: center;
+  box-shadow: 0 0 16px rgba(0, 242, 254, 0.4);
+  animation: donutGlow 4s ease-in-out infinite alternate;
+}
+
+.donutCenter {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #08172c;
+  display: grid;
+  place-items: center;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.donutPercentage {
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.5px;
+}
+
+.legendList {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding-left: 8px;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11.5px;
+  color: #cbd5e1;
+  font-weight: 500;
+}
+
+.legendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dotSales { background: #00f2fe; box-shadow: 0 0 6px #00f2fe; }
+.dotRevenue { background: #3b82f6; box-shadow: 0 0 6px #3b82f6; }
+.dotProfit { background: #a855f7; box-shadow: 0 0 6px #a855f7; }
+
+/* MAIN SVG CANVAS FOR CONTINUOUS WAVES & HILL-SHAPED AREA CURVES */
+.mainChartSvg {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.hillAreaBack {
+  fill: url(#hillGradBack);
+  opacity: 0.55;
+}
+
+.hillAreaMid {
+  fill: url(#hillGradMid);
+  opacity: 0.65;
+}
+
+.hillAreaFront {
+  fill: url(#hillGradFront);
+  opacity: 0.85;
+}
+
+.solidMainLine {
+  fill: none;
+  stroke: url(#mainLineGrad);
+  stroke-width: 3.2;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 8px rgba(0, 242, 254, 0.8));
+}
+
+.dashedSecondaryLine {
+  fill: none;
+  stroke: #00f2fe;
+  stroke-width: 2.2;
+  stroke-dasharray: 8 8;
+  opacity: 0.85;
+  filter: drop-shadow(0 0 5px rgba(0, 242, 254, 0.6));
+  animation: dashStream 6s linear infinite;
+}
+
+.purpleAccentLine {
+  fill: none;
+  stroke: #a855f7;
+  stroke-width: 1.8;
+  opacity: 0.6;
+  filter: drop-shadow(0 0 5px rgba(168, 85, 247, 0.7));
+}
+
+.chartDot {
+  fill: #00f2fe;
+  filter: drop-shadow(0 0 7px #00f2fe);
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: dotPulse 2s ease-in-out infinite alternate;
+}
+
+.chartDotPurple {
+  fill: #c084fc;
+  filter: drop-shadow(0 0 7px #c084fc);
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: dotPulse 2.3s ease-in-out infinite alternate;
+}
+
+/* ANIMATION KEYFRAMES */
+
+@keyframes barMove1 { 0% { transform: scaleY(0.35); } 100% { transform: scaleY(1.35); } }
+@keyframes barMove2 { 0% { transform: scaleY(0.45); } 100% { transform: scaleY(1.25); } }
+@keyframes barMove3 { 0% { transform: scaleY(0.38); } 100% { transform: scaleY(1.40); } }
+@keyframes barMove4 { 0% { transform: scaleY(0.48); } 100% { transform: scaleY(1.22); } }
+@keyframes barMove5 { 0% { transform: scaleY(0.42); } 100% { transform: scaleY(1.28); } }
+@keyframes barMove6 { 0% { transform: scaleY(0.50); } 100% { transform: scaleY(1.30); } }
+@keyframes barMove7 { 0% { transform: scaleY(0.36); } 100% { transform: scaleY(1.18); } }
+
+@keyframes trendScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes trendUndulate {
+  0% { transform: scaleY(0.85) translateY(2px); }
+  100% { transform: scaleY(1.15) translateY(-2px); }
+}
+
+@keyframes dashStream {
+  to { stroke-dashoffset: -64; }
+}
+
+@keyframes dotPulse {
+  0% { opacity: 0.55; transform: scale(0.85); }
+  100% { opacity: 1; transform: scale(1.25); }
+}
+
+@keyframes donutGlow {
+  0% { box-shadow: 0 0 10px rgba(0, 242, 254, 0.3); }
+  100% { box-shadow: 0 0 20px rgba(168, 85, 247, 0.55); }
+}
+
+@keyframes pulseGlow {
+  0% { opacity: 0.6; transform: translate(-50%, -20%) scale(0.95); }
+  100% { opacity: 1; transform: translate(-50%, -20%) scale(1.08); }
+}
+
+@keyframes particleFloat {
+  0%, 100% { transform: translate(0, 0); opacity: 0.3; }
+  50% { transform: translate(10px, -18px); opacity: 0.95; }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .dashboardContainer *,
+  .dashboardContainer *::before,
+  .dashboardContainer *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
