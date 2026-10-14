@@ -3,3 +3,12 @@ logs/
 __pycache__/
 *.pyc
 .env
+﻿.env
+.venv/
+__pycache__/
+*.pyc
+.venv/
+__pycache__/
+*.py[cod]
+.env
+.vscode/

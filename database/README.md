@@ -157,3 +157,11 @@ The password comes from a `.env` file (not committed, listed in
 | `database/load_data.py` | CSV → PostgreSQL loader script |
 | `database/.env` | DB credentials (not committed) |
 | `database/data/raw/*.csv` | Source CSV files |
+# Database
+This folder contains the database setup and documentation for the MetricMind project.
+Database responsibilities :
+- Raw data loading
+- Table Creation
+- Data type verification
+- Data quality checks
+- Database documentation

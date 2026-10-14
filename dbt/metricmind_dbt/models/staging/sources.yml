@@ -1,0 +1,13 @@
+version: 2
+
+sources:
+  - name: metricmind_raw
+    database: metricmind
+    schema: raw
+
+    tables:
+      - name: orders_raw
+      - name: customers_raw
+      - name: products_raw
+      - name: costs_raw
+      - name: date_dimension_raw

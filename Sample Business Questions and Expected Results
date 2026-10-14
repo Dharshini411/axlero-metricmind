@@ -1,0 +1,22 @@
+## 8. Sample Business Questions and Expected Results
+
+### Question 1: What is the total revenue?
+**Expected Result:** ₹740,910,750.00
+
+### Question 2: What is the total cost?
+**Expected Result:** ₹572,943,973.90
+
+### Question 3: What is the total profit?
+**Expected Result:** ₹167,966,776.10
+
+### Question 4: What is the overall profit margin?
+**Expected Result:** 22.67%
+
+### Question 5: What is the monthly revenue for 2025?
+**Expected Result:** The Semantic Layer returns revenue grouped by month from January 2025 to December 2025.
+
+### Question 6: What is the revenue by country?
+**Expected Result:** The Semantic Layer returns revenue grouped by the `country` dimension.
+
+### Question 7: What is the revenue and cost by country?
+**Expected Result:** The Semantic Layer returns both `revenue` and `cost` grouped by `country`.

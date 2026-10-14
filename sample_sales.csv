@@ -1,0 +1,11 @@
+
+orderId,orderDate,country,region,productName,category,customerName,segment,salesChannel,revenue,cost,profit,marginPercent
+1001,2026-07-05,India,West,Laptop,Technology,Aarav,Consumer,Online,1200,800,400,33.33
+1002,2026-07-12,USA,North,Phone,Technology,Emma,Consumer,Retail,900,600,300,33.33
+1003,2026-07-18,UK,South,Desk,Furniture,Oliver,Corporate,Online,700,450,250,35.71
+1004,2026-08-03,India,West,Phone,Technology,Diya,Consumer,Retail,1500,900,600,40.00
+1005,2026-08-08,USA,North,Laptop,Technology,Noah,Corporate,Online,1800,1200,600,33.33
+1006,2026-08-14,UK,South,Chair,Furniture,Amelia,Consumer,Retail,500,350,150,30.00
+1007,2026-08-20,India,South,Desk,Furniture,Rohan,Corporate,Online,800,500,300,37.50
+1008,2026-08-25,Canada,East,Phone,Technology,Sophia,Consumer,Online,1100,700,400,36.36
+

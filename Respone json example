@@ -1,0 +1,19 @@
+## 7. Response JSON Example
+
+Example response for Revenue and Cost by Country:
+
+```json
+{
+  "data": [
+    {
+      "Sales.country": "India",
+      "Sales.revenue": "123456789.00",
+      "Sales.cost": "95000000.00"
+    },
+    {
+      "Sales.country": "USA",
+      "Sales.revenue": "234567890.00",
+      "Sales.cost": "180000000.00"
+    }
+  ]
+}
